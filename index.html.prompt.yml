@@ -1,0 +1,14 @@
+messages:
+  - role: system
+    content: 'an app for connecting students to universities '
+  - role: user
+    content: >-
+      sliders 0 to 700 and drop down menus of 20 universities in ireland all 3
+      Enhance the functionality to display specific program requirements for
+      each university.
+
+      Fetch live data from a database or API (if available).
+
+      Build a mobile-friendly version or turn the app into a React
+      Native/Flutter-based mobile app.
+model: openai/gpt-4o
