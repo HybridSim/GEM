@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>≥75 Admissions – Interactive Dashboard</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<style>
+  :root{
+    --bg:#0b1020; --panel:#11172b; --ink:#e7eefc; --muted:#a9b4cc; --accent:#6aa4ff; --grid:#223055;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial; background:var(--bg); color:var(--ink)}
+  header{padding:20px 24px; border-bottom:1px solid var(--grid); background:linear-gradient(180deg,#0c1328, #0b1020)}
+  h1{margin:0; font-size:20px; letter-spacing:.3px}
+  .wrap{display:grid; grid-template-columns: 320px 1fr; gap:18px; padding:18px}
+  @media (max-width: 1000px){ .wrap{grid-template-columns:1fr} }
+  .card{background:var(--panel); border:1px solid var(--grid); border-radius:14px; padding:14px}
+  .sidebar .group{margin-bottom:14px}
+  .sidebar label{display:block; font-size:12px; color:var(--muted); margin-bottom:8px}
+  .row{display:flex; gap:10px; align-items:center}
+  input[type="number"], input[type="text"]{
+    width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--grid); background:#0c1426; color:var(--ink)
+  }
+  input[type="range"]{width:100%}
+  .small{font-size:12px; color:var(--muted)}
+  .kpis{display:grid; grid-template-columns:repeat(5,1fr); gap:12px}
+  @media (max-width:1200px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+  .kpi{padding:12px; border-radius:12px; background:#0e1730; border:1px solid var(--grid)}
+  .kpi .label{font-size:12px; color:var(--muted)}
+  .kpi .val{font-size:20px; margin-top:6px}
+  .charts{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:1200px){ .charts{grid-template-columns:1fr} }
+  button{cursor:pointer; border:1px solid var(--grid); background:#122042; color:var(--ink); padding:10px 12px; border-radius:10px}
+  button:hover{background:#162a54}
+  .footer{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  a.btn{display:inline-block; text-decoration:none; padding:10px 12px; border-radius:10px; border:1px solid var(--grid); color:var(--ink); background:#122042}
+  a.btn:hover{background:#162a54}
+  .params{white-space:pre; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; font-size:12px; color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <h1>≥75 Admissions – System Dynamics Dashboard (client-side, GitHub Pages–ready)</h1>
+</header>
+
+<div class="wrap">
+  <!-- SIDEBAR -->
+  <aside class="sidebar card">
+    <div class="group">
+      <label>Initial population ≥75 (people)</label>
+      <input id="initial_pop" type="number" min="0" max="500000" value="11500" step="100">
+    </div>
+
+    <div class="group">
+      <label>Annual net growth rate (≥75): <span id="growth_rate_val" class="small">0.02</span></label>
+      <input id="growth_rate" type="range" min="-0.05" max="0.08" value="0.02" step="0.001">
+    </div>
+
+    <div class="group">
+      <label>Annual mortality/discharge rate (≥75): <span id="mortality_rate_val" class="small">0.05</span></label>
+      <input id="mortality_rate" type="range" min="0" max="0.2" value="0.05" step="0.001">
+    </div>
+
+    <div class="group">
+      <label>ED attendance rate (per 1,000 per year): <span id="ed_rate_val" class="small">600</span></label>
+      <input id="ed_rate" type="range" min="0" max="2000" value="600" step="10">
+    </div>
+
+    <div class="group">
+      <label>Admission rate from ED (≥75): <span id="admission_rate_val" class="small">0.68</span></label>
+      <input id="admission_rate" type="range" min="0" max="1" value="0.68" step="0.01">
+    </div>
+
+    <div class="group">
+      <label>Mean length of stay (days): <span id="los_days_val" class="small">7</span></label>
+      <input id="los_days" type="range" min="0" max="30" value="7" step="0.1">
+    </div>
+
+    <div class="group">
+      <label>Unit cost per admission (€)</label>
+      <input id="unit_cost" type="number" min="0" max="100000" step="100" value="5500">
+    </div>
+
+    <div class="group row">
+      <div style="flex:1">
+        <label>Start year</label>
+        <input id="start_year" type="number" value="2015" step="1" />
+      </div>
+      <div style="flex:1">
+        <label>End year</label>
+        <input id="end_year" type="number" value="2050" step="1" />
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Time step (years)</label>
+      <select id="dt">
+        <option value="0.25" selected>0.25</option>
+        <option value="0.5">0.5</option>
+        <option value="1">1.0</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label>Price year label</label>
+      <input id="price_year" type="text" value="Specify (e.g., 2024 €)" />
+    </div>
+
+    <div class="group footer">
+      <button id="reset">Reset defaults</button>
+      <a id="download_csv" class="btn" href="#" download="age75_dashboard_results.csv">Download CSV</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="card">
+    <div class="kpis">
+      <div class="kpi"><div class="label">Population ≥75 (final)</div><div id="kpi_pop" class="val">—</div></div>
+      <div class="kpi"><div class="label">ED attendances / yr (final)</div><div id="kpi_att" class="val">—</div></div>
+      <div class="kpi"><div class="label">Admissions / yr (final)</div><div id="kpi_adm" class="val">—</div></div>
+      <div class="kpi"><div class="label">Bed-days / yr (final)</div><div id="kpi_bd" class="val">—</div></div>
+      <div class="kpi"><div class="label">Total cost / yr (final)</div><div id="kpi_cost" class="val">—</div></div>
+    </div>
+
+    <div class="charts" style="margin-top:12px">
+      <canvas id="chart_pop" height="140"></canvas>
+      <canvas id="chart_att" height="140"></canvas>
+      <canvas id="chart_adm" height="140"></canvas>
+      <canvas id="chart_cum" height="140"></canvas>
+      <canvas id="chart_bd"  height="140"></canvas>
+      <canvas id="chart_cost" height="140"></canvas>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="small">Current parameter set (for reproducibility):</div>
+      <pre id="param_dump" class="params"></pre>
+    </div>
+  </main>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+  // Helpers
+  const q = (id)=>document.getElementById(id);
+  const fmt0 = (n)=>Number(n).toLocaleString();
+  const fmt2 = (n)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:2});
+  const clamp = (v,min,max)=>Math.min(Math.max(v,min),max);
+
+  // Read inputs
+  function readParams(){
+    let start = parseFloat(q("start_year").value);
+    let end   = parseFloat(q("end_year").value);
+    if(end < start){ end = start; q("end_year").value = end; }
+    return {
+      initial_pop: parseFloat(q("initial_pop").value),
+      growth_rate: parseFloat(q("growth_rate").value),
+      mortality_rate: parseFloat(q("mortality_rate").value),
+      ed_rate_per_1000: parseFloat(q("ed_rate").value),
+      admission_rate: parseFloat(q("admission_rate").value),
+      los_days: parseFloat(q("los_days").value),
+      unit_cost_eur: parseFloat(q("unit_cost").value),
+      start_year: start,
+      end_year: end,
+      dt: parseFloat(q("dt").value),
+      price_year: q("price_year").value
+    };
+  }
+
+  // Euler simulation (mirrors earlier SD structure)
+  function simulate(p){
+    const t = [];
+    for(let x=p.start_year; x<=p.end_year+1e-9; x+=p.dt){ t.push(Number(x.toFixed(10))); }
+
+    const n = t.length;
+    const pop = new Array(n).fill(0);
+    const attend = new Array(n).fill(0);
+    const adm = new Array(n).fill(0);
+    const bd = new Array(n).fill(0);
+    const cost = new Array(n).fill(0);
+    const cum = new Array(n).fill(0);
+
+    pop[0] = p.initial_pop;
+
+    for(let i=1;i<n;i++){
+      const inflow = p.growth_rate * pop[i-1];
+      const outflow= p.mortality_rate * pop[i-1];
+      const dpop   = (inflow - outflow) * p.dt;
+      pop[i] = Math.max(0, pop[i-1] + dpop);
+
+      const thisAttend = pop[i-1] * (p.ed_rate_per_1000/1000.0); // per year
+      const thisAdm    = thisAttend * p.admission_rate;
+      const thisBD     = thisAdm * p.los_days;
+      const thisCost   = thisAdm * p.unit_cost_eur;
+
+      attend[i] = thisAttend;
+      adm[i]    = thisAdm;
+      bd[i]     = thisBD;
+      cost[i]   = thisCost;
+      cum[i]    = cum[i-1] + thisAdm * p.dt; // integrate admissions over time
+    }
+
+    return {t, pop, attend, adm, bd, cost, cum};
+  }
+
+  // Charts
+  function makeLine(ctx, label, data, yLabel){
+    return new Chart(ctx, {
+      type: 'line',
+      data: { labels: data.t, datasets: [{ label, data: data.series }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: true } },
+        scales: {
+          x: { title: { display: true, text: 'Year' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          y: { title: { display: true, text: yLabel }, grid: { color: 'rgba(255,255,255,0.05)' } }
+        }
+      }
+    });
+  }
+
+  const charts = {};
+  function initCharts(){
+    charts.pop   = makeLine(q("chart_pop"),  "Population ≥75",         {t:[], series:[]}, "People");
+    charts.att   = makeLine(q("chart_att"),  "ED attendances / year",   {t:[], series:[]}, "Attendances");
+    charts.adm   = makeLine(q("chart_adm"),  "Admissions / year",       {t:[], series:[]}, "Admissions");
+    charts.cum   = makeLine(q("chart_cum"),  "Cumulative admissions",   {t:[], series:[]}, "People");
+    charts.bd    = makeLine(q("chart_bd"),   "Bed-days / year",         {t:[], series:[]}, "Bed-days");
+    charts.cost  = makeLine(q("chart_cost"), "Total cost / year",       {t:[], series:[]}, "€");
+  }
+
+  function updateCharts(sim){
+    const set = (ch, t, arr)=>{
+      ch.data.labels = t;
+      ch.data.datasets[0].data = arr;
+      ch.update();
+    };
+    set(charts.pop,  sim.t, sim.pop);
+    set(charts.att,  sim.t, sim.attend);
+    set(charts.adm,  sim.t, sim.adm);
+    set(charts.cum,  sim.t, sim.cum);
+    set(charts.bd,   sim.t, sim.bd);
+    set(charts.cost, sim.t, sim.cost);
+  }
+
+  // KPIs
+  function updateKpis(sim){
+    const i = sim.t.length - 1;
+    q("kpi_pop").textContent  = fmt0(sim.pop[i]);
+    q("kpi_att").textContent  = fmt0(sim.attend[i]);
+    q("kpi_adm").textContent  = fmt0(sim.adm[i]);
+    q("kpi_bd").textContent   = fmt0(sim.bd[i]);
+    q("kpi_cost").textContent = "€ " + fmt0(sim.cost[i]);
+  }
+
+  // CSV download
+  function toCSV(p, sim){
+    const header = [
+      "Year","Population_75plus",
+      "ED_Attendances_75plus_per_year",
+      "Admissions_75plus_per_year",
+      "Bed_Days_75plus_per_year",
+      "Total_Cost_75plus_per_year",
+      "Cumulative_Admissions_75plus"
+    ].join(",");
+
+    let rows = [header];
+    for(let i=0;i<sim.t.length;i++){
+      rows.push([
+        sim.t[i],
+        sim.pop[i],
+        sim.attend[i],
+        sim.adm[i],
+        sim.bd[i],
+        sim.cost[i],
+        sim.cum[i]
+      ].join(","));
+    }
+    return rows.join("\n");
+  }
+
+  // Parameter dump
+  function dumpParams(p){
+    q("param_dump").textContent = JSON.stringify(p, null, 2);
+  }
+
+  // UI bindings
+  function bind(){
+    const live = [
+      "initial_pop","growth_rate","mortality_rate","ed_rate",
+      "admission_rate","los_days","unit_cost","start_year","end_year","dt","price_year"
+    ];
+    live.forEach(id=>{
+      q(id).addEventListener("input", ()=>{
+        if(id==="growth_rate") q("growth_rate_val").textContent = q(id).value;
+        if(id==="mortality_rate") q("mortality_rate_val").textContent = q(id).value;
+        if(id==="ed_rate") q("ed_rate_val").textContent = q(id).value;
+        if(id==="admission_rate") q("admission_rate_val").textContent = q(id).value;
+        if(id==="los_days") q("los_days_val").textContent = q(id).value;
+        recalc();
+      });
+    });
+
+    q("reset").addEventListener("click", ()=>{
+      q("initial_pop").value = 11500;
+      q("growth_rate").value = 0.02;      q("growth_rate_val").textContent = "0.02";
+      q("mortality_rate").value = 0.05;   q("mortality_rate_val").textContent = "0.05";
+      q("ed_rate").value = 600;           q("ed_rate_val").textContent = "600";
+      q("admission_rate").value = 0.68;   q("admission_rate_val").textContent = "0.68";
+      q("los_days").value = 7;            q("los_days_val").textContent = "7";
+      q("unit_cost").value = 5500;
+      q("start_year").value = 2015;
+      q("end_year").value = 2050;
+      q("dt").value = 0.25;
+      q("price_year").value = "Specify (e.g., 2024 €)";
+      recalc();
+    });
+  }
+
+  // Recompute + refresh views
+  function recalc(){
+    const p = readParams();
+    const sim = simulate(p);
+    updateCharts(sim);
+    updateKpis(sim);
+    dumpParams(p);
+
+    // wire download
+    const csv = toCSV(p, sim);
+    const blob = new Blob([csv], {type:"text/csv"});
+    const url = URL.createObjectURL(blob);
+    const a = q("download_csv");
+    a.href = url;
+    a.download = "age75_dashboard_results.csv";
+  }
+
+  // Bootstrap
+  initCharts(); bind(); recalc();
+})();
+</script>
+</body>
+</html>
