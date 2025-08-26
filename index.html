@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hybrid Simulation Modelling Lab (HSML) MIDCARE© University Hospital Limerick (UHL) Over 75 Admissions Interactive Dashboard</title>
+  <title>Hybrid Simulation Modelling Lab (HSML) MIDCARE© Over 75 Admissions Interactive Dashboard</title>
   <style>
     :root{--bg:#0b1020;--panel:#11172b;--ink:#e7eefc;--muted:#a9b4cc;--grid:#223055;}
     *{box-sizing:border-box}
@@ -41,7 +41,7 @@
         alt="HSML Logo"
         style="height:40px"
         src="data:image/png;base64,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" />
-      Hybrid Simulation Modelling Lab (HSML) MIDCARE© University Hospital Limerick (UHL) Over 75 Admissions Interactive Dashboard
+      Hybrid Simulation Modelling Lab (HSML) MIDCARE© Over 75 Admissions Interactive Dashboard
     </h1>
   </header>
 
@@ -53,11 +53,8 @@
         <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
       </div>
       <div class="group">
-
-<label>Annual net growth rate (≥75): <span id="growth_rate_val">0.05</span></label>
-<input id="growth_rate" type="range" min="-0.02" max="0.10" value="0.05" step="0.001">
-
-        
+        <label>Annual net growth rate (≥75): <span id="growth_rate_val">0.00</span></label>
+        <input id="growth_rate" type="range" min="-0.02" max="0.10" value="0.00" step="0.001">
       </div>
       <div class="group">
         <label>Annual mortality/discharge rate (≥75): <span id="mortality_rate_val">0.05</span></label>
@@ -65,7 +62,7 @@
       </div>
       <div class="group">
         <label>ED attendance rate (per 1,000 per year): <span id="ed_rate_val">900</span></label>
-        <input id="ed_rate" type="range" min="500" max="1500" value="700" step="10">
+        <input id="ed_rate" type="range" min="500" max="1500" value="900" step="10">
       </div>
       <div class="group">
         <label>Admission rate from ED (≥75): <span id="admission_rate_val">0.55</span></label>
@@ -121,12 +118,12 @@
           <svg id="svg_adm" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
                style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
         </div>
-        <div class="plot card"><h3>Average Daily Occupied Beds</h3>
-          <svg id="svg_avgbed" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
+        <div class="plot card"><h3>Cumulative admissions</h3>
+          <svg id="svg_cum" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
                style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
         </div>
-        <div class="plot card"><h3>Bed-days per year</h3>
-          <svg id="svg_bd" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
+        <div class="plot card"><h3>Average Daily Occupied Beds</h3>
+          <svg id="svg_avgbed" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
                style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>Total cost per year (<span id="price_lbl"></span>)</h3>
@@ -180,7 +177,8 @@ Unit cost per admission   | €5,800          | Based on per euro cost of ~€83
     function simulate(p){
       const t=[]; for(let x=p.start_year; x<=p.end_year+1e-9; x+=p.dt){ t.push(Number(x.toFixed(10))); }
       const n=t.length;
-      const pop=Array(n).fill(0), attend=Array(n).fill(0), adm=Array(n).fill(0), bd=Array(n).fill(0), cost=Array(n).fill(0), cum=Array(n).fill(0), avgbed=Array(n).fill(0);
+      const pop=Array(n).fill(0), attend=Array(n).fill(0), adm=Array(n).fill(0),
+            bd=Array(n).fill(0), cost=Array(n).fill(0), cum=Array(n).fill(0), avgbed=Array(n).fill(0);
 
       pop[0]=p.initial_pop;
       for(let i=1;i<n;i++){
@@ -189,13 +187,15 @@ Unit cost per admission   | €5,800          | Based on per euro cost of ~€83
         pop[i] = Math.max(0, pop[i-1] + (inflow - outflow) * p.dt);
       }
       for(let i=0;i<n;i++){
-        const a = pop[i] * (p.ed_rate_per_1000 / 1000.0);
-        const m = a * p.admission_rate;
-        attend[i]=a; adm[i]=m; bd[i]=m*p.los_days; cost[i]=m*p.unit_cost_eur;
+        const a = pop[i] * (p.ed_rate_per_1000 / 1000.0); // attendances
+        const m = a * p.admission_rate;                   // admissions
+        attend[i]=a; adm[i]=m;
+        bd[i]=m*p.los_days;
         avgbed[i]=bd[i]/365.0;
-        cum[i] = (i===0?0:cum[i-1] + m*p.dt);
+        cost[i]=m*p.unit_cost_eur;
+        cum[i] = (i===0?0:cum[i-1] + m*p.dt);             // integrate admissions over time
       }
-      return {t,pop,attend,adm,bd,cost,cum,avgbed};
+      return {t,pop,attend,adm,bd,avgbed,cost,cum};
     }
 
     // SVG line chart
@@ -238,10 +238,19 @@ Unit cost per admission   | €5,800          | Based on per euro cost of ~€83
     }
 
     function toCSV(p,sim){
-      const cols=["Year","Population_75plus","ED_Attendances_75plus_per_year","Admissions_75plus_per_year","Avg_Daily_Occupied_Beds_75plus","Bed_Days_75plus_per_year","Total_Cost_75plus_per_year"];
+      const cols=[
+        "Year",
+        "Population_75plus",
+        "ED_Attendances_75plus_per_year",
+        "Admissions_75plus_per_year",
+        "Cumulative_Admissions_75plus",
+        "Avg_Daily_Occupied_Beds_75plus",
+        "Total_Bed_Days_75plus_per_year",
+        "Total_Cost_75plus_per_year"
+      ];
       const rows=[cols.join(",")];
       for(let i=0;i<sim.t.length;i++) rows.push([
-        sim.t[i],sim.pop[i],sim.attend[i],sim.adm[i],sim.avgbed[i],sim.bd[i],sim.cost[i]
+        sim.t[i],sim.pop[i],sim.attend[i],sim.adm[i],sim.cum[i],sim.avgbed[i],sim.bd[i],sim.cost[i]
       ].join(","));
       return rows.join("\n");
     }
@@ -258,12 +267,12 @@ Unit cost per admission   | €5,800          | Based on per euro cost of ~€83
     function recalc(){
       const p=readParams(); q("price_lbl").textContent=p.price_year;
       const sim=simulate(p);
-      lineChart(q("svg_pop"),  {t:sim.t,y:sim.pop});
-      lineChart(q("svg_att"),  {t:sim.t,y:sim.attend});
-      lineChart(q("svg_adm"),  {t:sim.t,y:sim.adm});
+      lineChart(q("svg_pop"),   {t:sim.t,y:sim.pop});
+      lineChart(q("svg_att"),   {t:sim.t,y:sim.attend});
+      lineChart(q("svg_adm"),   {t:sim.t,y:sim.adm});
+      lineChart(q("svg_cum"),   {t:sim.t,y:sim.cum});     // different shape (increasing)
       lineChart(q("svg_avgbed"),{t:sim.t,y:sim.avgbed});
-      lineChart(q("svg_bd"),   {t:sim.t,y:sim.bd});
-      lineChart(q("svg_cost"), {t:sim.t,y:sim.cost});
+      lineChart(q("svg_cost"),  {t:sim.t,y:sim.cost});
       updateKpis(sim);
 
       const csv=toCSV(p,sim);
@@ -315,6 +324,7 @@ Unit cost per admission   | €5,800          | Based on per euro cost of ~€83
   </script>
 </body>
 </html>
+
 
 
 
