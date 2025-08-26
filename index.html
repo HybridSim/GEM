@@ -26,8 +26,6 @@
     @media (max-width:1200px){.charts{grid-template-columns:1fr}}
     .plot.card{padding:8px 10px}
     .plot h3{margin:4px 0 10px;font-size:14px;color:var(--ink)}
-    button,a.btn{cursor:pointer;border:1px solid var(--grid);background:#122042;color:var(--ink);padding:9px 12px;border-radius:10px;text-decoration:none}
-    button:hover,a.btn:hover{background:#162a54}
     .footer{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     details.note{margin:18px 22px;color:var(--muted)}
     details.note summary{color:var(--ink);cursor:pointer}
@@ -47,11 +45,11 @@
         <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
       </div>
 
-      <!-- IMPORTANT: raw growth 0.10 with mortality 0.05 => net +5%/yr -->
+      <!-- RAW growth 0.10 with mortality 0.05 => NET +5%/yr -->
       <div class="group">
         <label>Annual growth rate (raw, ≥75): <span id="growth_rate_val">0.10</span></label>
         <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001">
-        <div style="font-size:11px;color:var(--muted)">Net = growth – mortality. With mortality 0.05 this gives net ≈ +0.05 (5%).</div>
+        <div style="font-size:11px;color:var(--muted)">Net = growth – mortality (0.10 − 0.05 = 0.05).</div>
       </div>
 
       <div class="group">
@@ -91,10 +89,8 @@
       <div class="footer">
         <button id="run">Run</button>
         <button id="reset">Reset</button>
-        <a id="download_csv" class="btn" href="#" download="age75_dashboard_results.csv">Download CSV</a>
-        <a id="download_html" class="btn" href="#" download="age75_dashboard.html">Download this HTML</a>
+        <label style="margin-left:auto"><input id="autoupd" type="checkbox" checked> Auto-update on change</label>
       </div>
-      <div class="group"><label><input id="autoupd" type="checkbox" checked> Auto-update on change</label></div>
     </aside>
 
     <!-- MAIN -->
@@ -110,27 +106,27 @@
       <div class="charts" style="margin-top:12px">
         <div class="plot card"><h3>Population ≥75</h3>
           <svg id="svg_pop" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>ED Attendances per year</h3>
           <svg id="svg_att" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>Admissions per year</h3>
           <svg id="svg_adm" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>Cumulative admissions</h3>
           <svg id="svg_cum" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>Bed-days per year</h3>
           <svg id="svg_bd" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
         <div class="plot card"><h3>Total cost per year (<span id="price_lbl"></span>)</h3>
           <svg id="svg_cost" class="chart" width="900" height="340" viewBox="0 0 900 340" preserveAspectRatio="none"
-               style="width:100% !important; height:340px !important; display:block !important; background:#0a1125; border-radius:10px;"></svg>
+               style="width:100%; height:340px; display:block; background:#0a1125; border-radius:10px;"></svg>
         </div>
       </div>
     </main>
@@ -157,7 +153,7 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
   (function(){
     const q = (id)=>document.getElementById(id);
     const fmt0 = (n)=>Math.round(Number(n)).toLocaleString();
-    const fmt€ = (n)=>"€ "+Math.round(Number(n)).toLocaleString();
+    const fmtEUR = (n)=>"€ "+Math.round(Number(n)).toLocaleString();
 
     function readParams(){
       let start = parseFloat(q("start_year").value);
@@ -176,17 +172,17 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
       };
     }
 
-    // Simulate (absolute series). Population uses raw growth - mortality.
+    // Simulate absolute series. Population uses NET growth (raw - mortality).
     function simulate(p){
-      const t=[]; for(let x=p.start_year; x<=p.end_year+1e-9; x+=p.dt){ t.push(Number(x.toFixed(10))); }
+      const t=[]; for(let x=p.start_year; x<=p.end_year+1e-9; x+=p.dt){ t.push(Number(x.toFixed(6))); }
       const n=t.length;
       const pop=Array(n).fill(0), attend=Array(n).fill(0), adm=Array(n).fill(0),
             bd=Array(n).fill(0), cost=Array(n).fill(0), cum=Array(n).fill(0);
 
       pop[0]=p.initial_pop;
       for(let i=1;i<n;i++){
-        const dPop = (p.growth_rate - p.mortality_rate) * pop[i-1] * p.dt; // NET growth
-        pop[i] = Math.max(0, pop[i-1] + dPop);
+        const net = (p.growth_rate - p.mortality_rate);
+        pop[i] = Math.max(0, pop[i-1] + net * pop[i-1] * p.dt);
       }
       for(let i=0;i<n;i++){
         const a = pop[i] * (p.ed_rate_per_1000 / 1000.0);
@@ -197,7 +193,7 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
       return {t,pop,attend,adm,bd,cost,cum};
     }
 
-    // SVG line chart
+    // Simple SVG line chart
     function lineChart(svg, series){
       const W = Number(svg.getAttribute('width'))  || 900;
       const H = Number(svg.getAttribute('height')) || 340;
@@ -206,8 +202,10 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
 
       const m={t:14,r:16,b:28,l:44}, w=W-m.l-m.r, h=H-m.t-m.b;
       const t=series.t, y=series.y;
-      const minX=Math.min(...t), maxX=Math.max(...t);
-      const minY=Math.min(...y), maxY=Math.max(...y);
+      let minX=Math.min(...t), maxX=Math.max(...t);
+      let minY=Math.min(...y), maxY=Math.max(...y);
+      if(!isFinite(minY) || !isFinite(maxY) || minY===maxY){ minY=0; maxY=1; } // guard
+
       const x=(v)=>m.l + (w*(v-minX))/( (maxX-minX) || 1 );
       const ypx=(v)=>m.t + h - (h*(v-minY))/( (maxY-minY) || 1 );
 
@@ -236,39 +234,31 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
       svg.appendChild(path(d));
     }
 
-    function toCSV(p,sim){
-      const cols=["Year","Population_75plus","ED_Attendances_75plus_per_year","Admissions_75plus_per_year","Cumulative_Admissions_75plus","Bed_Days_75plus_per_year","Total_Cost_75plus_per_year"];
-      const rows=[cols.join(",")];
-      for(let i=0;i<sim.t.length;i++) rows.push([sim.t[i],sim.pop[i],sim.attend[i],sim.adm[i],sim.cum[i],sim.bd[i],sim.cost[i]].join(","));
-      return rows.join("\n");
-    }
-
     function updateKpis(sim){
       const i=sim.t.length-1;
       q("kpi_pop").textContent  = fmt0(sim.pop[i]);
       q("kpi_att").textContent  = fmt0(sim.attend[i]);
       q("kpi_adm").textContent  = fmt0(sim.adm[i]);
       q("kpi_bd").textContent   = fmt0(sim.bd[i]);
-      q("kpi_cost").textContent = fmt€(sim.cost[i]);
+      q("kpi_cost").textContent = fmtEUR(sim.cost[i]);
     }
 
     function recalc(){
-      const p=readParams(); q("price_lbl").textContent=p.price_year;
+      const p=readParams();
+      q("price_lbl").textContent=p.price_year;
       const sim=simulate(p);
+
       lineChart(q("svg_pop"),  {t:sim.t,y:sim.pop});
       lineChart(q("svg_att"),  {t:sim.t,y:sim.attend});
       lineChart(q("svg_adm"),  {t:sim.t,y:sim.adm});
       lineChart(q("svg_cum"),  {t:sim.t,y:sim.cum});
       lineChart(q("svg_bd"),   {t:sim.t,y:sim.bd});
       lineChart(q("svg_cost"), {t:sim.t,y:sim.cost});
-      updateKpis(sim);
 
-      const csv=toCSV(p,sim);
-      q("download_csv").href = URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
-      q("download_html").href = URL.createObjectURL(new Blob([document.documentElement.outerHTML], {type:"text/html"}));
+      updateKpis(sim);
     }
 
-    // Bind inputs
+    // Bind inputs (input + change so all browsers fire)
     const inputs = ["initial_pop","growth_rate","mortality_rate","ed_rate","admission_rate","los_days","unit_cost","start_year","end_year","dt","price_year"];
     function bind(){
       inputs.forEach(id=>{
@@ -287,7 +277,7 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
 
       q("run").addEventListener("click", ()=>recalc());
 
-      // Reset to NET +5% defaults (raw growth 0.10, mortality 0.05)
+      // Reset to NET +5% defaults (raw 0.10, mortality 0.05)
       q("reset").addEventListener("click", ()=>{
         q("initial_pop").value=30000;
         q("growth_rate").value=0.10; q("growth_rate_val").textContent="0.10";
@@ -300,17 +290,18 @@ Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 day
         recalc();
       });
 
-      // Keyboard shortcut: R to run
       window.addEventListener("keydown", (e)=>{ if(e.key.toLowerCase()==="r") recalc(); });
       window.addEventListener("resize", recalc);
     }
 
     bind();
+    // initial render with defaults
     recalc();
   })();
   </script>
 </body>
 </html>
+
 
 
 
