@@ -30,18 +30,39 @@
 </style>
 </head>
 <body>
-<header><h1>>=75 Admissions – System Dynamic Dashboard </h1></header>
+<header><h1> Over 75 Admissions – Interactive Dashboard </h1></header>
 
 <div class="wrap">
   <!-- SIDEBAR -->
   <aside class="card">
-    <div class="group"><label>Initial population >=75 (people)</label><input id="initial_pop" type="number" min="0" max="500000" value="11500" step="100"></div>
-    <div class="group"><label>Annual net growth rate (>=75): <span id="growth_rate_val">0.02</span></label><input id="growth_rate" type="range" min="-0.05" max="0.08" value="0.02" step="0.001"></div>
-    <div class="group"><label>Annual mortality/discharge rate (>=75): <span id="mortality_rate_val">0.05</span></label><input id="mortality_rate" type="range" min="0" max="0.2" value="0.05" step="0.001"></div>
-    <div class="group"><label>ED attendance rate (per 1,000 per year): <span id="ed_rate_val">600</span></label><input id="ed_rate" type="range" min="0" max="2000" value="600" step="10"></div>
-    <div class="group"><label>Admission rate from ED (>=75): <span id="admission_rate_val">0.68</span></label><input id="admission_rate" type="range" min="0" max="1" value="0.68" step="0.01"></div>
-    <div class="group"><label>Mean length of stay (days): <span id="los_days_val">7</span></label><input id="los_days" type="range" min="0" max="30" value="7" step="0.1"></div>
-    <div class="group"><label>Unit cost per admission (€)</label><input id="unit_cost" type="number" min="0" max="100000" step="100" value="5500"></div>
+<div class="group">
+  <label>Initial population ≥75 (people)</label>
+  <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
+</div>
+<div class="group">
+  <label>Annual net growth rate (≥75): <span id="growth_rate_val">0.00</span></label>
+  <input id="growth_rate" type="range" min="-0.02" max="0.05" value="0.00" step="0.001">
+</div>
+<div class="group">
+  <label>Annual mortality/discharge rate (≥75): <span id="mortality_rate_val">0.05</span></label>
+  <input id="mortality_rate" type="range" min="0.03" max="0.10" value="0.05" step="0.001">
+</div>
+<div class="group">
+  <label>ED attendance rate (per 1,000 per year): <span id="ed_rate_val">900</span></label>
+  <input id="ed_rate" type="range" min="500" max="1500" value="900" step="10">
+</div>
+<div class="group">
+  <label>Admission rate from ED (≥75): <span id="admission_rate_val">0.55</span></label>
+  <input id="admission_rate" type="range" min="0.40" max="0.70" value="0.55" step="0.01">
+</div>
+<div class="group">
+  <label>Mean length of stay (days): <span id="los_days_val">6.5</span></label>
+  <input id="los_days" type="range" min="4" max="10" value="6.5" step="0.1">
+</div>
+<div class="group">
+  <label>Unit cost per admission (€)</label>
+  <input id="unit_cost" type="number" min="0" max="10000" step="100" value="5800">
+</div>
     <div class="group" style="display:flex;gap:8px">
       <div style="flex:1"><label>Start year</label><input id="start_year" type="number" value="2015" step="1"></div>
       <div style="flex:1"><label>End year</label><input id="end_year" type="number" value="2050" step="1"></div>
@@ -257,7 +278,6 @@
 </script>
 </body>
 </html>
-"""
 
 
 
