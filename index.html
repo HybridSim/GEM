@@ -1,13 +1,9 @@
-# Build the requested compact layout:
-# - Less whitespace in top inputs
-# - Sliders on the same level
-# - 6 charts in a 3×2 grid, smaller height so everything fits on one screen
-html = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>HSML MIDCARE© — Over 75 Admissions (Compact 3×2)</title>
+<title>HSML MIDCARE© — Over 75 Admissions (Compact 3×2, v6 — play animation)</title>
 <style>
   :root{
     --bg:#ffffff; --panel:#f8fafc; --ink:#111111; --muted:#6b7280; --border:#e5e7eb;
@@ -29,19 +25,22 @@ html = r"""<!DOCTYPE html>
   .group.slider{grid-template-rows:18px var(--sliderH) 0px}
   .group.input{grid-template-rows:16px auto}
   .label-top{font-size:12px;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hint{display:none} /* removed to reduce vertical space */
+  .hint{display:none}
 
   input[type="number"],input[type="text"],select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);font-size:14px}
 
-  input[type="range"]{width:100%;height:var(--sliderH);appearance:none;background:transparent}
-  input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--teal))}
+  /* filled-track range for clear value linkage */
+  input[type="range"]{width:100%;height:var(--sliderH);appearance:none;background:linear-gradient(90deg,var(--teal),var(--teal)) no-repeat #e5e7eb;border-radius:999px}
+  input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:transparent}
   input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal);box-shadow:0 2px 5px rgba(0,0,0,.18)}
-  input[type="range"]::-moz-range-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--teal))}
+  input[type="range"]::-moz-range-track{height:6px;border-radius:999px;background:transparent}
+  input[type="range"]::-moz-range-progress{background-color:var(--teal);height:6px;border-radius:999px}
   input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal)}
 
   .controls-footer{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
   .btn{background:var(--navy);color:#fff;border:1px solid var(--navy);padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
   .btn.alt{background:var(--teal);border-color:var(--teal)}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
   .btn:hover{filter:brightness(.96)}
   .right-grow{margin-left:auto;font-size:12px;color:var(--muted)}
 
@@ -51,7 +50,7 @@ html = r"""<!DOCTYPE html>
   .plot h3{margin:2px 0 6px;font-size:12px;color:var(--ink);font-weight:700}
   svg.chart{width:100%;height:170px;display:block;background:#ffffff;border-radius:8px;border:1px solid var(--border)}
 
-  /* Optional KPIs (collapsed by default) */
+  /* Optional KPIs */
   details.kpiwrap{margin-top:6px}
   details.kpiwrap summary{cursor:pointer;color:var(--muted);font-size:12px}
   .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
@@ -76,29 +75,29 @@ html = r"""<!DOCTYPE html>
 
 <div class="container">
 
-  <!-- CONTROLS: two tight rows -->
+  <!-- CONTROLS -->
   <section class="card">
     <!-- Sliders row -->
     <div class="controls">
       <div class="group slider">
         <div class="label-top">Annual growth rate (raw, ≥75): <b id="growth_rate_val">0.10</b></div>
-        <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001">
+        <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001" data-fill="true">
       </div>
       <div class="group slider">
         <div class="label-top">Annual mortality/discharge rate (≥75): <b id="mortality_rate_val">0.05</b></div>
-        <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.05" step="0.001">
+        <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.05" step="0.001" data-fill="true">
       </div>
       <div class="group slider">
         <div class="label-top">ED attendance rate (per 1,000/yr): <b id="ed_rate_val">900</b></div>
-        <input id="ed_rate" type="range" min="300" max="1500" value="900" step="10">
+        <input id="ed_rate" type="range" min="300" max="1500" value="900" step="10" data-fill="true">
       </div>
       <div class="group slider">
         <div class="label-top">Admission rate from ED (≥75): <b id="admission_rate_val">0.55</b></div>
-        <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.55" step="0.01">
+        <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.55" step="0.01" data-fill="true">
       </div>
       <div class="group slider">
         <div class="label-top">Mean length of stay (days): <b id="los_days_val">6.5</b></div>
-        <input id="los_days" type="range" min="3" max="20" value="6.5" step="0.1">
+        <input id="los_days" type="range" min="3" max="20" value="6.5" step="0.1" data-fill="true">
       </div>
     </div>
 
@@ -121,24 +120,30 @@ html = r"""<!DOCTYPE html>
         <input id="end_year" type="number" value="2050" step="1">
       </div>
       <div class="group input">
-        <div class="label-top">Time step &amp; price label</div>
+        <div class="label-top">Time step, price label, play speed</div>
         <div style="display:flex;gap:6px">
           <select id="dt" style="flex:0 0 74px"><option value="0.25" selected>0.25</option><option value="0.5">0.5</option><option value="1">1.0</option></select>
           <input id="price_year" type="text" value="Specify (e.g., 2024 €)" style="flex:1">
+          <select id="speed" style="flex:0 0 120px">
+            <option value="2500" selected>Slow play</option>
+            <option value="1400">Normal</option>
+            <option value="700">Fast</option>
+          </select>
         </div>
       </div>
     </div>
 
     <div class="controls-footer">
-      <button id="run" class="btn">Run</button>
-      <button id="reset" class="btn alt">Reset</button>
+      <button id="run" class="btn" type="button">Run ▶</button>
+      <button id="playPause" class="btn ghost" type="button" disabled>Play ▶</button>
+      <button id="reset" class="btn alt" type="button">Reset</button>
       <label class="right-grow">
-        <input id="autoupd" type="checkbox" checked> Auto-update on change
+        <input id="autoupd" type="checkbox"> Auto-update on change
       </label>
     </div>
   </section>
 
-  <!-- Optional KPIs (collapsed to keep one-screen layout) -->
+  <!-- Optional KPIs -->
   <details class="kpiwrap">
     <summary>Show KPIs</summary>
     <div class="kpis">
@@ -174,12 +179,11 @@ html = r"""<!DOCTYPE html>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+  // --- Helpers ---
   const q = (id)=>document.getElementById(id);
   const fmt0 = (n)=>Math.round(Number(n)).toLocaleString();
   const fmtEUR = (n)=>"€ "+Math.round(Number(n)).toLocaleString();
-
-  function num(val, fallback){ const x = parseFloat(val); return Number.isFinite(x) ? x : fallback; }
+  const num = (val, fb)=>{ const x=parseFloat(val); return Number.isFinite(x)?x:fb; };
 
   function readParams(){
     let start = num(q("start_year").value, 2015);
@@ -194,7 +198,8 @@ document.addEventListener('DOMContentLoaded', function(){
       los_days:         num(q("los_days").value, 6.5),
       unit_cost_eur:    num(q("unit_cost").value, 5800),
       start_year: start, end_year: end, dt: num(q("dt").value, 0.25),
-      price_year: q("price_year").value || ""
+      price_year: q("price_year").value || "",
+      speed: num(q("speed").value, 2500)
     };
   }
 
@@ -218,15 +223,48 @@ document.addEventListener('DOMContentLoaded', function(){
     return {t,pop,attend,adm,bd,cost,cum};
   }
 
-  // Compact light theme line plotter
-  function lineChart(svg, series){
+  // Slider visual fill
+  function styleRange(el){
+    if(!el || !el.matches('input[type="range"]')) return;
+    const min = parseFloat(el.min)||0, max=parseFloat(el.max)||100, val=parseFloat(el.value)||0;
+    const pct = ((val-min)/(max-min))*100;
+    el.style.backgroundSize = pct + "% 100%";
+  }
+
+  // Placeholder
+  function drawPlaceholder(svg, msg){
+    const W=svg.clientWidth||900, H=svg.clientHeight||170;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const NS='http://www.w3.org/2000/svg';
+    const rect=document.createElementNS(NS,'rect');
+    rect.setAttribute('x',8); rect.setAttribute('y',8);
+    rect.setAttribute('width', W-16); rect.setAttribute('height', H-16);
+    rect.setAttribute('rx',8); rect.setAttribute('fill','#fff'); rect.setAttribute('stroke','#e5e7eb');
+    svg.appendChild(rect);
+    const text=document.createElementNS(NS,'text');
+    text.setAttribute('x', W/2); text.setAttribute('y', H/2);
+    text.setAttribute('text-anchor','middle'); text.setAttribute('fill','#6b7280');
+    text.setAttribute('font-size','12');
+    text.textContent = msg || 'Press Run to play';
+    svg.appendChild(text);
+  }
+  function renderBlank(){
+    ['svg_pop','svg_att','svg_adm','svg_cum','svg_bd','svg_cost'].forEach(id=>{
+      const el = q(id); if(el) drawPlaceholder(el, 'Press Run to play');
+    });
+    const pl = document.getElementById('price_lbl'); if(pl) pl.textContent = '';
+  }
+
+  // Axes + animated line with clipPath sweep
+  function lineChartPlay(svg, series, opts){
     const W=svg.clientWidth||900, H=svg.clientHeight||170;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     while(svg.firstChild) svg.removeChild(svg.firstChild);
 
     const m={t:8,r:10,b:20,l:46}, w=W-m.l-m.r, h=H-m.t-m.b;
     const t=series.t, y=series.y;
-    if(!t || !y || t.length===0 || y.length===0){ return; }
+    if(!t || !y || t.length===0 || y.length===0){ return {cancel:()=>{}}; }
 
     let minX=Math.min(...t), maxX=Math.max(...t);
     let minY=Math.min(...y), maxY=Math.max(...y);
@@ -239,13 +277,15 @@ document.addEventListener('DOMContentLoaded', function(){
     const NS='http://www.w3.org/2000/svg';
     const line=(a)=>{ const el=document.createElementNS(NS,'line'); for(const k in a) el.setAttribute(k,a[k]); return el; };
     const text=(a,txt)=>{ const el=document.createElementNS(NS,'text'); for(const k in a) el.setAttribute(k,a[k]); el.textContent=txt; return el; };
-    const polyline=(pts)=>{ const el=document.createElementNS(NS,'polyline'); el.setAttribute('points',pts); el.setAttribute('fill','none'); el.setAttribute('stroke', '#1e3a8a'); el.setAttribute('stroke-width','2'); return el; };
+    const path=()=>document.createElementNS(NS,'path');
+    const grp=()=>document.createElementNS(NS,'g');
+    const defs=document.createElementNS(NS,'defs');
+    svg.appendChild(defs);
 
     // axes
     svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
     svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
 
-    // ticks (3 each to stay compact)
     for(let i=0;i<=3;i++){
       const xt=minX + (i*(maxX-minX))/3, lx=scaleX(xt), ly=H-m.b;
       svg.appendChild(line({x1:lx,y1:ly,x2:lx,y2:ly+3,stroke:'#cbd5e1','stroke-width':1}));
@@ -257,84 +297,155 @@ document.addEventListener('DOMContentLoaded', function(){
       svg.appendChild(text({x:m.l-6,y:ly+3,fill:'#475569','font-size':9,'text-anchor':'end'}, Math.round(yt).toLocaleString()));
     }
 
-    // series
-    let pts="";
-    for(let i=0;i<t.length;i++){ pts += `${scaleX(t[i])},${scaleY(y[i])} `; }
-    svg.appendChild(polyline(pts.trim()));
+    // path
+    let d=""; for(let i=0;i<t.length;i++){ const X=scaleX(t[i]), Y=scaleY(y[i]); d += (i===0?`M ${X} ${Y}`:` L ${X} ${Y}`); }
+    const p = path(); p.setAttribute('d', d); p.setAttribute('fill','none'); p.setAttribute('stroke','#1e3a8a'); p.setAttribute('stroke-width','2');
+
+    // clipPath sweep
+    const clipId = 'clip_' + Math.random().toString(36).slice(2);
+    const cp = document.createElementNS(NS,'clipPath'); cp.setAttribute('id', clipId); cp.setAttribute('clipPathUnits','userSpaceOnUse');
+    const clipRect = document.createElementNS(NS,'rect');
+    clipRect.setAttribute('x', m.l); clipRect.setAttribute('y', m.t);
+    clipRect.setAttribute('width', 0); clipRect.setAttribute('height', h);
+    cp.appendChild(clipRect); defs.appendChild(cp);
+
+    const g = grp(); g.setAttribute('clip-path', `url(#${clipId})`);
+    g.appendChild(p); svg.appendChild(g);
+
+    // moving head dot
+    const head = document.createElementNS(NS,'circle');
+    head.setAttribute('r', 3.2); head.setAttribute('fill', '#0d9488'); head.setAttribute('stroke', '#0d9488');
+    svg.appendChild(head);
+
+    // animation
+    let raf = null, start=null, paused=false, pauseT=0;
+    const duration = Math.max(300, (opts&&opts.duration)||2000);
+    function step(ts){
+      if(start===null) start=ts;
+      if(paused){ start += (ts - pauseT); pauseT = ts; raf = requestAnimationFrame(step); return; }
+      const tnorm = Math.min(1, (ts - start) / duration);
+      clipRect.setAttribute('width', tnorm * w);
+      // move the head along X; map to nearest point index
+      const idx = Math.min(Math.floor(tnorm * (t.length-1)), t.length-1);
+      head.setAttribute('cx', scaleX(t[idx])); head.setAttribute('cy', scaleY(y[idx]));
+      if(tnorm < 1){ raf = requestAnimationFrame(step); }
+      else { if (opts && typeof opts.onDone === 'function') opts.onDone(); }
+    }
+    raf = requestAnimationFrame(step);
+
+    return {
+      cancel: ()=>{ if(raf) cancelAnimationFrame(raf); },
+      pause: ()=>{ if(!paused){ paused=true; pauseT=performance.now(); } },
+      play: ()=>{ if(paused){ paused=false; raf=requestAnimationFrame(step); } }
+    };
   }
+
+  let active = []; // track animations to pause/cancel
+  function cancelActive(){ active.forEach(a=>a.cancel&&a.cancel()); active=[]; }
 
   function updateKpis(sim){
-    if (!document.querySelector('.kpiwrap[open]')) return;
+    const kpiWrap = document.querySelector('.kpiwrap');
+    if (!kpiWrap || !kpiWrap.open) return;
     const i=sim.t.length-1;
-    const qid = (id,val)=>{ const el = document.getElementById(id); if(el) el.textContent = val; };
-    qid("kpi_pop",  fmt0(sim.pop[i]));
-    qid("kpi_att",  fmt0(sim.attend[i]));
-    qid("kpi_adm",  fmt0(sim.adm[i]));
-    qid("kpi_bd",   fmt0(sim.bd[i]));
-    qid("kpi_cost", fmtEUR(sim.cost[i]));
+    const set = (id,val)=>{ const el=q(id); if(el) el.textContent = val; };
+    set("kpi_pop",  fmt0(sim.pop[i]));
+    set("kpi_att",  fmt0(sim.attend[i]));
+    set("kpi_adm",  fmt0(sim.adm[i]));
+    set("kpi_bd",   fmt0(sim.bd[i]));
+    set("kpi_cost", fmtEUR(sim.cost[i]));
   }
 
-  function recalc(){
-    const p=readParams();
-    document.getElementById("price_lbl").textContent=p.price_year;
-    const sim=simulate(p);
-
-    lineChart(q("svg_pop"),  {t:sim.t,y:sim.pop});
-    lineChart(q("svg_att"),  {t:sim.t,y:sim.attend});
-    lineChart(q("svg_adm"),  {t:sim.t,y:sim.adm});
-    lineChart(q("svg_cum"),  {t:sim.t,y:sim.cum});
-    lineChart(q("svg_bd"),   {t:sim.t,y:sim.bd});
-    lineChart(q("svg_cost"), {t:sim.t,y:sim.cost});
-
-    updateKpis(sim);
+  function playAll(sim, duration){
+    cancelActive();
+    const done = ()=>{};
+    active = [
+      lineChartPlay(q("svg_pop"),  {t:sim.t,y:sim.pop},  {duration, onDone:done}),
+      lineChartPlay(q("svg_att"),  {t:sim.t,y:sim.attend},{duration, onDone:done}),
+      lineChartPlay(q("svg_adm"),  {t:sim.t,y:sim.adm},  {duration, onDone:done}),
+      lineChartPlay(q("svg_cum"),  {t:sim.t,y:sim.cum},  {duration, onDone:done}),
+      lineChartPlay(q("svg_bd"),   {t:sim.t,y:sim.bd},   {duration, onDone:done}),
+      lineChartPlay(q("svg_cost"), {t:sim.t,y:sim.cost}, {duration, onDone:()=>{ updateKpis(sim); }})
+    ];
   }
 
-  // Bind inputs safely
-  const inputs = ["initial_pop","growth_rate","mortality_rate","ed_rate","admission_rate","los_days","unit_cost","start_year","end_year","dt","price_year"];
   function bind(){
-    inputs.forEach(id=>{
-      ["input","change"].forEach(evt=>{
-        q(id).addEventListener(evt,()=>{
-          if(!q("autoupd").checked) return;
-          if(id==="growth_rate") q("growth_rate_val").textContent=q(id).value;
-          if(id==="mortality_rate") q("mortality_rate_val").textContent=q(id).value;
-          if(id==="ed_rate") q("ed_rate_val").textContent=q(id).value;
-          if(id==="admission_rate") q("admission_rate_val").textContent=q(id).value;
-          if(id==="los_days") q("los_days_val").textContent=q(id).value;
-          recalc();
-        });
-      });
+    // Slider labels + fill
+    const idMap = {
+      "growth_rate":"growth_rate_val",
+      "mortality_rate":"mortality_rate_val",
+      "ed_rate":"ed_rate_val",
+      "admission_rate":"admission_rate_val",
+      "los_days":"los_days_val"
+    };
+    Object.keys(idMap).forEach(id=>{
+      const el=q(id), lbl=q(idMap[id]);
+      if(!el||!lbl) return;
+      const handler=()=>{
+        lbl.textContent = el.value;
+        if(el.dataset.fill) styleRange(el);
+        const au = q("autoupd");
+        if(au && au.checked){
+          const p=readParams(), sim=simulate(p); playAll(sim, p.speed);
+        }
+      };
+      el.addEventListener('input', handler);
+      el.addEventListener('change', handler);
+      styleRange(el);
     });
 
-    q("run").addEventListener("click", recalc);
+    // Buttons
+    q("run").addEventListener("click", ()=>{
+      const p=readParams(); const sim=simulate(p);
+      q("price_lbl").textContent = p.price_year;
+      playAll(sim, p.speed);
+      const pp = q("playPause"); pp.disabled = false; pp.textContent = "Pause ⏸";
+      pp.dataset.state = "playing";
+    });
+
+    q("playPause").addEventListener("click", ()=>{
+      const pp = q("playPause");
+      if(pp.dataset.state === "playing"){
+        active.forEach(a=>a.pause&&a.pause());
+        pp.textContent = "Play ▶";
+        pp.dataset.state = "paused";
+      } else {
+        active.forEach(a=>a.play&&a.play());
+        pp.textContent = "Pause ⏸";
+        pp.dataset.state = "playing";
+      }
+    });
 
     q("reset").addEventListener("click", ()=>{
+      cancelActive();
+      // defaults
       q("initial_pop").value=30000;
-      q("growth_rate").value=0.10; q("growth_rate_val").textContent="0.10";
-      q("mortality_rate").value=0.05; q("mortality_rate_val").textContent="0.05";
-      q("ed_rate").value=900; q("ed_rate_val").textContent="900";
-      q("admission_rate").value=0.55; q("admission_rate_val").textContent="0.55";
-      q("los_days").value=6.5; q("los_days_val").textContent="6.5";
+      q("growth_rate").value=0.10; q("growth_rate_val").textContent="0.10"; styleRange(q("growth_rate"));
+      q("mortality_rate").value=0.05; q("mortality_rate_val").textContent="0.05"; styleRange(q("mortality_rate"));
+      q("ed_rate").value=900; q("ed_rate_val").textContent="900"; styleRange(q("ed_rate"));
+      q("admission_rate").value=0.55; q("admission_rate_val").textContent="0.55"; styleRange(q("admission_rate"));
+      q("los_days").value=6.5; q("los_days_val").textContent="6.5"; styleRange(q("los_days"));
       q("unit_cost").value=5800;
       q("start_year").value=2015; q("end_year").value=2050; q("dt").value=0.25; q("price_year").value="Specify (e.g., 2024 €)";
-      recalc();
+      q("speed").value="2500";
+      const pp = q("playPause"); pp.disabled = true; pp.textContent = "Play ▶"; pp.dataset.state="paused";
+      const au = q("autoupd"); if(au) au.checked = false;
+      renderBlank();
     });
 
-    window.addEventListener("resize", recalc);
-    document.querySelector('details.kpiwrap').addEventListener('toggle', recalc);
+    // Keep placeholders responsive
+    window.addEventListener("resize", ()=>{
+      cancelActive();
+      renderBlank();
+    });
   }
 
-  bind();
-  recalc(); // initial render
-});
+  // Init blank
+  bind(); renderBlank();
 </script>
 </body>
 </html>
-"""
-path = "/mnt/data/hsml_midcare_over75_compact_3x2.html"
-with open(path, "w", encoding="utf-8") as f:
-    f.write(html)
-print(path)
+
+
 
 
 
