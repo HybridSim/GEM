@@ -1,101 +1,146 @@
-<!DOCTYPE html>
+# Build the requested compact layout:
+# - Less whitespace in top inputs
+# - Sliders on the same level
+# - 6 charts in a 3×2 grid, smaller height so everything fits on one screen
+html = r"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Hybrid Simulation Modelling Lab (HSML) MIDCARE© Over 75 Admissions Interactive Dashboard</title>
+<title>HSML MIDCARE© — Over 75 Admissions (Compact 3×2)</title>
 <style>
-  :root{--bg:#0b1020;--panel:#11172b;--ink:#e7eefc;--muted:#a9b4cc;--grid:#223055;}
+  :root{
+    --bg:#ffffff; --panel:#f8fafc; --ink:#111111; --muted:#6b7280; --border:#e5e7eb;
+    --navy:#1e3a8a; --teal:#0d9488; --card:#ffffff;
+    --sliderH: 24px;
+  }
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--ink)}
-  header{padding:18px 22px;border-bottom:1px solid var(--grid);background:linear-gradient(180deg,#0c1328,#0b1020)}
-  h1{margin:0;font-size:18px;letter-spacing:.2px}
-  .wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px}
-  @media (max-width:1000px){.wrap{grid-template-columns:1fr}}
-  .card{background:var(--panel);border:1px solid var(--grid);border-radius:14px;padding:14px}
-  .group{margin-bottom:14px}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
-  input[type="number"],input[type="text"],select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--grid);background:#0c1426;color:var(--ink)}
-  input[type="range"]{width:100%}
-  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-  @media (max-width:1200px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .kpi{padding:10px;border-radius:12px;background:#0e1730;border:1px solid var(--grid)}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+  header{padding:10px 12px;border-bottom:1px solid var(--border);background:#fff}
+  .title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .title-logo{height:38px;width:auto}
+  h1{margin:0;font-size:18px;letter-spacing:.2px;color:var(--navy)}
+  .container{max-width:1180px;margin:10px auto 18px;padding:0 10px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+
+  /* --- Controls (top) --- */
+  .controls{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .group{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;display:grid;gap:4px}
+  .group.slider{grid-template-rows:18px var(--sliderH) 0px}
+  .group.input{grid-template-rows:16px auto}
+  .label-top{font-size:12px;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hint{display:none} /* removed to reduce vertical space */
+
+  input[type="number"],input[type="text"],select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);font-size:14px}
+
+  input[type="range"]{width:100%;height:var(--sliderH);appearance:none;background:transparent}
+  input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--teal))}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal);box-shadow:0 2px 5px rgba(0,0,0,.18)}
+  input[type="range"]::-moz-range-track{height:6px;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--teal))}
+  input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal)}
+
+  .controls-footer{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+  .btn{background:var(--navy);color:#fff;border:1px solid var(--navy);padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+  .btn.alt{background:var(--teal);border-color:var(--teal)}
+  .btn:hover{filter:brightness(.96)}
+  .right-grow{margin-left:auto;font-size:12px;color:var(--muted)}
+
+  /* Charts 3×2 */
+  .charts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+  .plot.card{padding:6px;background:#fff}
+  .plot h3{margin:2px 0 6px;font-size:12px;color:var(--ink);font-weight:700}
+  svg.chart{width:100%;height:170px;display:block;background:#ffffff;border-radius:8px;border:1px solid var(--border)}
+
+  /* Optional KPIs (collapsed by default) */
+  details.kpiwrap{margin-top:6px}
+  details.kpiwrap summary{cursor:pointer;color:var(--muted);font-size:12px}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+  .kpi{padding:6px;border-radius:8px;background:#fff;border:1px solid var(--border)}
   .kpi .label{font-size:12px;color:var(--muted)}
-  .kpi .val{font-size:18px;margin-top:6px}
-  .charts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media (max-width:1200px){.charts{grid-template-columns:1fr}}
-  .plot.card{padding:8px 10px}
-  .plot h3{margin:4px 0 10px;font-size:14px;color:var(--ink)}
-  .footer{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  details.note{margin:18px 22px;color:var(--muted)}
-  details.note summary{color:var(--ink);cursor:pointer}
-  .note pre{white-space:pre-wrap}
-  svg.chart{width:100%;height:340px;display:block;background:#0a1125;border-radius:10px}
+  .kpi .val{font-size:15px;margin-top:2px;color:var(--navy);font-weight:800}
+
+  @media (max-width:1180px){.container{max-width:1100px}}
+  @media (max-width:980px){
+    .controls{grid-template-columns:repeat(3,1fr)}
+    .charts{grid-template-columns:1fr 1fr}
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>Hybrid Simulation Modelling Lab (HSML) MIDCARE© Over 75 Admissions Interactive Dashboard</h1>
+  <div class="title-row">
+    <img class="title-logo" src="https://assets.zyrosite.com/AoP61N2BR4i8Q6jl/logo-hsml-AE07eKDgMLFgWBoQ.png" alt="HSML Logo">
+    <h1>HSML MIDCARE© — Over 75 Admissions (Compact 3×2)</h1>
+  </div>
 </header>
 
-<div class="wrap">
-  <!-- SIDEBAR -->
-  <aside class="card">
-    <div class="group">
-      <label>Initial population ≥75 (people)</label>
-      <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
+<div class="container">
+
+  <!-- CONTROLS: two tight rows -->
+  <section class="card">
+    <!-- Sliders row -->
+    <div class="controls">
+      <div class="group slider">
+        <div class="label-top">Annual growth rate (raw, ≥75): <b id="growth_rate_val">0.10</b></div>
+        <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001">
+      </div>
+      <div class="group slider">
+        <div class="label-top">Annual mortality/discharge rate (≥75): <b id="mortality_rate_val">0.05</b></div>
+        <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.05" step="0.001">
+      </div>
+      <div class="group slider">
+        <div class="label-top">ED attendance rate (per 1,000/yr): <b id="ed_rate_val">900</b></div>
+        <input id="ed_rate" type="range" min="300" max="1500" value="900" step="10">
+      </div>
+      <div class="group slider">
+        <div class="label-top">Admission rate from ED (≥75): <b id="admission_rate_val">0.55</b></div>
+        <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.55" step="0.01">
+      </div>
+      <div class="group slider">
+        <div class="label-top">Mean length of stay (days): <b id="los_days_val">6.5</b></div>
+        <input id="los_days" type="range" min="3" max="20" value="6.5" step="0.1">
+      </div>
     </div>
 
-    <!-- RAW growth 0.10 with mortality 0.05 => NET +5%/yr -->
-    <div class="group">
-      <label>Annual growth rate (raw, ≥75): <span id="growth_rate_val">0.10</span></label>
-      <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001">
-      <div style="font-size:11px;color:var(--muted)">Net = growth − mortality (0.10 − 0.05 = 0.05).</div>
+    <!-- Inputs row -->
+    <div class="controls" style="margin-top:6px;">
+      <div class="group input">
+        <div class="label-top">Initial population ≥75 (people)</div>
+        <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
+      </div>
+      <div class="group input">
+        <div class="label-top">Unit cost per admission (€)</div>
+        <input id="unit_cost" type="number" min="0" max="20000" step="100" value="5800">
+      </div>
+      <div class="group input">
+        <div class="label-top">Start year</div>
+        <input id="start_year" type="number" value="2015" step="1">
+      </div>
+      <div class="group input">
+        <div class="label-top">End year</div>
+        <input id="end_year" type="number" value="2050" step="1">
+      </div>
+      <div class="group input">
+        <div class="label-top">Time step &amp; price label</div>
+        <div style="display:flex;gap:6px">
+          <select id="dt" style="flex:0 0 74px"><option value="0.25" selected>0.25</option><option value="0.5">0.5</option><option value="1">1.0</option></select>
+          <input id="price_year" type="text" value="Specify (e.g., 2024 €)" style="flex:1">
+        </div>
+      </div>
     </div>
 
-    <div class="group">
-      <label>Annual mortality/discharge rate (≥75): <span id="mortality_rate_val">0.05</span></label>
-      <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.05" step="0.001">
+    <div class="controls-footer">
+      <button id="run" class="btn">Run</button>
+      <button id="reset" class="btn alt">Reset</button>
+      <label class="right-grow">
+        <input id="autoupd" type="checkbox" checked> Auto-update on change
+      </label>
     </div>
+  </section>
 
-    <div class="group">
-      <label>ED attendance rate (per 1,000 per year): <span id="ed_rate_val">900</span></label>
-      <input id="ed_rate" type="range" min="300" max="1500" value="900" step="10">
-    </div>
-
-    <div class="group">
-      <label>Admission rate from ED (≥75): <span id="admission_rate_val">0.55</span></label>
-      <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.55" step="0.01">
-    </div>
-
-    <div class="group">
-      <label>Mean length of stay (days): <span id="los_days_val">6.5</span></label>
-      <input id="los_days" type="range" min="3" max="20" value="6.5" step="0.1">
-    </div>
-
-    <div class="group">
-      <label>Unit cost per admission (€)</label>
-      <input id="unit_cost" type="number" min="0" max="20000" step="100" value="5800">
-    </div>
-
-    <div class="group" style="display:flex;gap:8px">
-      <div style="flex:1"><label>Start year</label><input id="start_year" type="number" value="2015" step="1"></div>
-      <div style="flex:1"><label>End year</label><input id="end_year" type="number" value="2050" step="1"></div>
-    </div>
-    <div class="group"><label>Time step (years)</label>
-      <select id="dt"><option value="0.25" selected>0.25</option><option value="0.5">0.5</option><option value="1">1.0</option></select>
-    </div>
-    <div class="group"><label>Price year label</label><input id="price_year" type="text" value="Specify (e.g., 2024 €)"></div>
-
-    <div class="footer">
-      <button id="run">Run</button>
-      <button id="reset">Reset</button>
-      <label style="margin-left:auto"><input id="autoupd" type="checkbox" checked> Auto-update on change</label>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="card">
+  <!-- Optional KPIs (collapsed to keep one-screen layout) -->
+  <details class="kpiwrap">
+    <summary>Show KPIs</summary>
     <div class="kpis">
       <div class="kpi"><div class="label">Population ≥75 (final)</div><div id="kpi_pop" class="val">—</div></div>
       <div class="kpi"><div class="label">ED attendances / yr (final)</div><div id="kpi_att" class="val">—</div></div>
@@ -103,46 +148,30 @@
       <div class="kpi"><div class="label">Bed-days / yr (final)</div><div id="kpi_bd" class="val">—</div></div>
       <div class="kpi"><div class="label">Total cost / yr (final)</div><div id="kpi_cost" class="val">—</div></div>
     </div>
+  </details>
 
-    <div class="charts" style="margin-top:12px">
-      <div class="plot card"><h3>Population ≥75</h3>
-        <svg id="svg_pop" class="chart"></svg>
-      </div>
-      <div class="plot card"><h3>ED Attendances per year</h3>
-        <svg id="svg_att" class="chart"></svg>
-      </div>
-      <div class="plot card"><h3>Admissions per year</h3>
-        <svg id="svg_adm" class="chart"></svg>
-      </div>
-      <div class="plot card"><h3>Cumulative admissions</h3>
-        <svg id="svg_cum" class="chart"></svg>
-      </div>
-      <div class="plot card"><h3>Bed-days per year</h3>
-        <svg id="svg_bd" class="chart"></svg>
-      </div>
-      <div class="plot card"><h3>Total cost per year (<span id="price_lbl"></span>)</h3>
-        <svg id="svg_cost" class="chart"></svg>
-      </div>
+  <!-- CHARTS: 3 across × 2 down -->
+  <section class="charts">
+    <div class="plot card"><h3>Population ≥75</h3>
+      <svg id="svg_pop" class="chart"></svg>
     </div>
-  </main>
+    <div class="plot card"><h3>ED Attendances per year</h3>
+      <svg id="svg_att" class="chart"></svg>
+    </div>
+    <div class="plot card"><h3>Admissions per year</h3>
+      <svg id="svg_adm" class="chart"></svg>
+    </div>
+    <div class="plot card"><h3>Cumulative admissions</h3>
+      <svg id="svg_cum" class="chart"></svg>
+    </div>
+    <div class="plot card"><h3>Bed-days per year</h3>
+      <svg id="svg_bd" class="chart"></svg>
+    </div>
+    <div class="plot card"><h3>Total cost per year (<span id="price_lbl"></span>)</h3>
+      <svg id="svg_cost" class="chart"></svg>
+    </div>
+  </section>
 </div>
-
-<details class="note">
-  <summary>Rationale & Data Sources</summary>
-  <pre>
-This dashboard uses parameter values updated to reflect current real-world data for the ≥75 population in the HSE Mid-West (University Hospital Limerick region).
-
-Parameter                 | Suggested Value | Rationale / Source
-------------------------- | --------------- | ------------------------------------------------------------
-Population ≥75            | ~30,000         | Census 2022 shows ~33,600 (65+) in Limerick alone; Midwest region (Clare, Limerick, N. Tipperary) likely has even more. (CSO, HSE.ie, Nenagh Guardian)
-Annual net growth rate    | 5%              | Implemented as raw growth 10% minus mortality 5% (net +5%/yr).
-Mortality/discharge rate  | 5% (3–10%)      | Typical annual attrition for ≥75 cohort; allows flexibility in modeling.
-ED attendance rate        | 900 / 1,000/yr  | Nationally, ~15% of ED attendances are ≥75; Midwest likely higher than 600/1,000. (HSE, IHCA)
-Admission rate from ED    | 55%             | National data show ~52% admitted; 55% used as realistic midpoint.
-Mean Length of Stay (LOS) | 6.5 days        | National ALOS for emergency inpatients ~6.3 days pre-pandemic.
-Unit cost per admission   | €5,800          | Approx. per diem €834 × 7 days.
-  </pre>
-</details>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
@@ -158,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(end < start){ end = start; q("end_year").value = end; }
     return {
       initial_pop:      num(q("initial_pop").value, 30000),
-      growth_rate:      num(q("growth_rate").value, 0.10),   // RAW growth
+      growth_rate:      num(q("growth_rate").value, 0.10),
       mortality_rate:   num(q("mortality_rate").value, 0.05),
       ed_rate_per_1000: num(q("ed_rate").value, 900),
       admission_rate:   num(q("admission_rate").value, 0.55),
@@ -189,13 +218,13 @@ document.addEventListener('DOMContentLoaded', function(){
     return {t,pop,attend,adm,bd,cost,cum};
   }
 
-  // very robust line plotter (polyline + axes)
+  // Compact light theme line plotter
   function lineChart(svg, series){
-    const W=svg.clientWidth||900, H=svg.clientHeight||340;
+    const W=svg.clientWidth||900, H=svg.clientHeight||170;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     while(svg.firstChild) svg.removeChild(svg.firstChild);
 
-    const m={t:16,r:18,b:30,l:50}, w=W-m.l-m.r, h=H-m.t-m.b;
+    const m={t:8,r:10,b:20,l:46}, w=W-m.l-m.r, h=H-m.t-m.b;
     const t=series.t, y=series.y;
     if(!t || !y || t.length===0 || y.length===0){ return; }
 
@@ -210,22 +239,22 @@ document.addEventListener('DOMContentLoaded', function(){
     const NS='http://www.w3.org/2000/svg';
     const line=(a)=>{ const el=document.createElementNS(NS,'line'); for(const k in a) el.setAttribute(k,a[k]); return el; };
     const text=(a,txt)=>{ const el=document.createElementNS(NS,'text'); for(const k in a) el.setAttribute(k,a[k]); el.textContent=txt; return el; };
-    const polyline=(pts)=>{ const el=document.createElementNS(NS,'polyline'); el.setAttribute('points',pts); el.setAttribute('fill','none'); el.setAttribute('stroke','#6aa4ff'); el.setAttribute('stroke-width','2'); return el; };
+    const polyline=(pts)=>{ const el=document.createElementNS(NS,'polyline'); el.setAttribute('points',pts); el.setAttribute('fill','none'); el.setAttribute('stroke', '#1e3a8a'); el.setAttribute('stroke-width','2'); return el; };
 
     // axes
-    svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:'#2a3a66','stroke-width':1}));
-    svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke:'#2a3a66','stroke-width':1}));
+    svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
+    svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
 
-    // ticks
-    for(let i=0;i<=5;i++){
-      const xt=minX + (i*(maxX-minX))/5, lx=scaleX(xt), ly=H-m.b;
-      svg.appendChild(line({x1:lx,y1:ly,x2:lx,y2:ly+4,stroke:'#2a3a66','stroke-width':1}));
-      svg.appendChild(text({x:lx,y:ly+16,fill:'#a9b4cc','font-size':10,'text-anchor':'middle'}, Math.round(xt)));
+    // ticks (3 each to stay compact)
+    for(let i=0;i<=3;i++){
+      const xt=minX + (i*(maxX-minX))/3, lx=scaleX(xt), ly=H-m.b;
+      svg.appendChild(line({x1:lx,y1:ly,x2:lx,y2:ly+3,stroke:'#cbd5e1','stroke-width':1}));
+      svg.appendChild(text({x:lx,y:ly+12,fill:'#475569','font-size':9,'text-anchor':'middle'}, Math.round(xt)));
     }
-    for(let i=0;i<=5;i++){
-      const yt=minY + (i*(maxY-minY))/5, ly=scaleY(yt);
-      svg.appendChild(line({x1:m.l-4,y1:ly,x2:m.l,y2:ly,stroke:'#2a3a66','stroke-width':1}));
-      svg.appendChild(text({x:m.l-6,y:ly+3,fill:'#a9b4cc','font-size':10,'text-anchor':'end'}, Math.round(yt).toLocaleString()));
+    for(let i=0;i<=3;i++){
+      const yt=minY + (i*(maxY-minY))/3, ly=scaleY(yt);
+      svg.appendChild(line({x1:m.l-3,y1:ly,x2:m.l,y2:ly,stroke:'#cbd5e1','stroke-width':1}));
+      svg.appendChild(text({x:m.l-6,y:ly+3,fill:'#475569','font-size':9,'text-anchor':'end'}, Math.round(yt).toLocaleString()));
     }
 
     // series
@@ -235,17 +264,19 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   function updateKpis(sim){
+    if (!document.querySelector('.kpiwrap[open]')) return;
     const i=sim.t.length-1;
-    q("kpi_pop").textContent  = fmt0(sim.pop[i]);
-    q("kpi_att").textContent  = fmt0(sim.attend[i]);
-    q("kpi_adm").textContent  = fmt0(sim.adm[i]);
-    q("kpi_bd").textContent   = fmt0(sim.bd[i]);
-    q("kpi_cost").textContent = fmtEUR(sim.cost[i]);
+    const qid = (id,val)=>{ const el = document.getElementById(id); if(el) el.textContent = val; };
+    qid("kpi_pop",  fmt0(sim.pop[i]));
+    qid("kpi_att",  fmt0(sim.attend[i]));
+    qid("kpi_adm",  fmt0(sim.adm[i]));
+    qid("kpi_bd",   fmt0(sim.bd[i]));
+    qid("kpi_cost", fmtEUR(sim.cost[i]));
   }
 
   function recalc(){
     const p=readParams();
-    q("price_lbl").textContent=p.price_year;
+    document.getElementById("price_lbl").textContent=p.price_year;
     const sim=simulate(p);
 
     lineChart(q("svg_pop"),  {t:sim.t,y:sim.pop});
@@ -290,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 
     window.addEventListener("resize", recalc);
+    document.querySelector('details.kpiwrap').addEventListener('toggle', recalc);
   }
 
   bind();
@@ -298,6 +330,12 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
+"""
+path = "/mnt/data/hsml_midcare_over75_compact_3x2.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(html)
+print(path)
+
 
 
 
