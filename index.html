@@ -5,11 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>HSML MIDCARE© — Over 75 Admissions </title>
 <style>
-  :root{
-    --bg:#ffffff; --panel:#f8fafc; --ink:#111111; --muted:#6b7280; --border:#e5e7eb;
-    --navy:#1e3a8a; --teal:#0d9488; --card:#ffffff;
-    --sliderH: 24px;
-  }
+  :root{ --bg:#ffffff; --panel:#f8fafc; --ink:#111111; --muted:#6b7280; --border:#e5e7eb;
+         --navy:#1e3a8a; --teal:#0d9488; --card:#ffffff; --sliderH:24px; }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
   header{padding:10px 12px;border-bottom:1px solid var(--border);background:#fff}
@@ -18,58 +15,67 @@
   h1{margin:0;font-size:18px;letter-spacing:.2px;color:var(--navy)}
   .container{max-width:1180px;margin:10px auto 18px;padding:0 10px}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-
-  /* --- Controls (top) --- */
-  .controls{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .controls{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
   .group{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px;display:grid;gap:4px}
   .group.slider{grid-template-rows:18px var(--sliderH) 0px}
   .group.input{grid-template-rows:16px auto}
   .label-top{font-size:12px;color:var(--ink);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .hint{display:none}
-
+  .hint{font-size:11px;color:var(--muted);display:block}
   input[type="number"],input[type="text"],select{width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);font-size:14px}
-
-  /* filled-track range for clear value linkage */
   input[type="range"]{width:100%;height:var(--sliderH);appearance:none;background:linear-gradient(90deg,var(--teal),var(--teal)) no-repeat #e5e7eb;border-radius:999px}
   input[type="range"]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:transparent}
   input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal);box-shadow:0 2px 5px rgba(0,0,0,.18)}
   input[type="range"]::-moz-range-track{height:6px;border-radius:999px;background:transparent}
   input[type="range"]::-moz-range-progress{background-color:var(--teal);height:6px;border-radius:999px}
   input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid var(--teal)}
-
   .controls-footer{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
   .btn{background:var(--navy);color:#fff;border:1px solid var(--navy);padding:6px 10px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
   .btn.alt{background:var(--teal);border-color:var(--teal)}
   .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
   .btn:hover{filter:brightness(.96)}
   .right-grow{margin-left:auto;font-size:12px;color:var(--muted)}
-
-  /* Charts 3×2 */
   .charts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
   .plot.card{padding:6px;background:#fff}
   .plot h3{margin:2px 0 6px;font-size:12px;color:var(--ink);font-weight:700}
   svg.chart{width:100%;height:170px;display:block;background:#ffffff;border-radius:8px;border:1px solid var(--border)}
-
-  /* Optional KPIs */
   details.kpiwrap{margin-top:6px}
   details.kpiwrap summary{cursor:pointer;color:var(--muted);font-size:12px}
   .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
   .kpi{padding:6px;border-radius:8px;background:#fff;border:1px solid var(--border)}
   .kpi .label{font-size:12px;color:var(--muted)}
   .kpi .val{font-size:15px;margin-top:2px;color:var(--navy);font-weight:800}
-
   @media (max-width:1180px){.container{max-width:1100px}}
-  @media (max-width:980px){
-    .controls{grid-template-columns:repeat(3,1fr)}
-    .charts{grid-template-columns:1fr 1fr}
-  }
+  @media (max-width:1080px){.controls{grid-template-columns:repeat(3,1fr)} .charts{grid-template-columns:1fr 1fr}}
+
+  /* Overlay for no-JS / blocked-JS environments */
+  .overlay{position:fixed;inset:0;background:rgba(17,24,39,.86);color:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px;text-align:center}
+  .overlay .box{max-width:720px;background:#111827;border:1px solid #374151;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .overlay h2{margin:0 0 8px;font-size:18px}
+  .overlay p{margin:8px 0 0;font-size:14px;opacity:.95}
 </style>
 </head>
 <body>
+<noscript>
+  <div class="overlay">
+    <div class="box">
+      <h2>JavaScript is disabled in this viewer</h2>
+      <p>This dashboard needs JavaScript to run. Please download the file and open it in your browser (Chrome, Edge, Firefox, or Safari).</p>
+    </div>
+  </div>
+</noscript>
+<div id="jsOverlay" class="overlay" style="display:none">
+  <div class="box">
+    <h2>This preview blocks interactive content</h2>
+    <p>To use the sliders and buttons, please save the file and open it locally in your browser.<br/>
+       • Right-click the link in ChatGPT → “Save link as…” → open the saved <b>.html</b> file.<br/>
+       • Or drag the file into a browser window.</p>
+  </div>
+</div>
+
 <header>
   <div class="title-row">
     <img class="title-logo" src="https://assets.zyrosite.com/AoP61N2BR4i8Q6jl/logo-hsml-AE07eKDgMLFgWBoQ.png" alt="HSML Logo">
-    <h1>HSML MIDCARE© — Over 75 GEM</h1>
+    <h1>HSML MIDCARE© — Over 75 GEM </h1>
   </div>
 </header>
 
@@ -80,24 +86,34 @@
     <!-- Sliders row -->
     <div class="controls">
       <div class="group slider">
-        <div class="label-top">Annual growth rate (raw, ≥75): <b id="growth_rate_val">0.10</b></div>
-        <input id="growth_rate" type="range" min="0" max="0.15" value="0.10" step="0.001" data-fill="true">
+        <div class="label-top">Annual growth rate (raw, ≥75): <b id="growth_rate_val">0.055</b></div>
+        <input id="growth_rate" type="range" min="0" max="0.12" value="0.055" step="0.001" data-fill="true">
+        <span class="hint">Gross growth to yield ~2.5× by 2050; mortality below.</span>
       </div>
       <div class="group slider">
-        <div class="label-top">Annual mortality/discharge rate (≥75): <b id="mortality_rate_val">0.05</b></div>
-        <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.05" step="0.001" data-fill="true">
+        <div class="label-top">Annual mortality/discharge rate (≥75): <b id="mortality_rate_val">0.029</b></div>
+        <input id="mortality_rate" type="range" min="0.00" max="0.12" value="0.029" step="0.001" data-fill="true">
+        <span class="hint">Approx. death/discharge flow; net growth ≈ 2.6%/yr.</span>
       </div>
       <div class="group slider">
-        <div class="label-top">ED attendance rate (per 1,000/yr): <b id="ed_rate_val">900</b></div>
-        <input id="ed_rate" type="range" min="300" max="1500" value="900" step="10" data-fill="true">
+        <div class="label-top">ED attendance rate (per 1,000/yr): <b id="ed_rate_val">750</b></div>
+        <input id="ed_rate" type="range" min="300" max="1500" value="750" step="10" data-fill="true">
+        <span class="hint">Best-estimate for ≥75 utilisation in 2024.</span>
       </div>
       <div class="group slider">
-        <div class="label-top">Admission rate from ED (≥75): <b id="admission_rate_val">0.55</b></div>
-        <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.55" step="0.01" data-fill="true">
+        <div class="label-top">Admission rate from ED (≥75): <b id="admission_rate_val">0.48</b></div>
+        <input id="admission_rate" type="range" min="0.30" max="0.80" value="0.48" step="0.01" data-fill="true">
+        <span class="hint">Higher than all-age average, reflecting acuity.</span>
       </div>
       <div class="group slider">
         <div class="label-top">Mean length of stay (days): <b id="los_days_val">6.5</b></div>
         <input id="los_days" type="range" min="3" max="20" value="6.5" step="0.1" data-fill="true">
+        <span class="hint">Close to recent emergency IP LOS.</span>
+      </div>
+      <div class="group slider">
+        <div class="label-top">Annual cost growth (inflation/drift): <b id="cost_growth_val">0.03</b></div>
+        <input id="cost_growth" type="range" min="-0.02" max="0.10" value="0.03" step="0.001" data-fill="true">
+        <span class="hint">Compounds unit cost each year.</span>
       </div>
     </div>
 
@@ -105,11 +121,16 @@
     <div class="controls" style="margin-top:6px;">
       <div class="group input">
         <div class="label-top">Initial population ≥75 (people)</div>
-        <input id="initial_pop" type="number" min="0" max="100000" value="30000" step="100">
+        <input id="initial_pop" type="number" min="0" max="1000000" value="30000" step="100">
       </div>
       <div class="group input">
-        <div class="label-top">Unit cost per admission (€)</div>
+        <div class="label-top">Base unit cost per admission (€)</div>
         <input id="unit_cost" type="number" min="0" max="20000" step="100" value="5800">
+        <span class="hint">Expressed in the base year below.</span>
+      </div>
+      <div class="group input">
+        <div class="label-top">Unit cost base year</div>
+        <input id="unit_base_year" type="number" value="2024" step="1">
       </div>
       <div class="group input">
         <div class="label-top">Start year</div>
@@ -120,31 +141,30 @@
         <input id="end_year" type="number" value="2050" step="1">
       </div>
       <div class="group input">
-        <div class="label-top">Time step, price label, play speed</div>
+        <div class="label-top">KPI cost display</div>
         <div style="display:flex;gap:6px">
-          <select id="dt" style="flex:0 0 74px"><option value="0.25" selected>0.25</option><option value="0.5">0.5</option><option value="1">1.0</option></select>
-          <input id="price_year" type="text" value="Specify (e.g., 2024 €)" style="flex:1">
-          <select id="speed" style="flex:0 0 120px">
-            <option value="2500" selected>Slow play</option>
-            <option value="1400">Normal</option>
-            <option value="700">Fast</option>
+          <select id="cost_mode" style="flex:0 0 160px">
+            <option value="nominal" selected>Nominal €</option>
+            <option value="real">Real € (base year)</option>
           </select>
+          <input id="base_year" type="number" value="2024" step="1" style="flex:0 0 90px">
+          <input id="price_year" type="text" value="Nominal vs Real (€ base 2024)" style="flex:1">
         </div>
+        <span class="hint">KPI uses the selected mode; chart shows both lines.</span>
       </div>
     </div>
 
     <div class="controls-footer">
       <button id="run" class="btn" type="button">Run ▶</button>
-      <button id="playPause" class="btn ghost" type="button" disabled>Play ▶</button>
       <button id="reset" class="btn alt" type="button">Reset</button>
       <label class="right-grow">
-        <input id="autoupd" type="checkbox"> Auto-update on change
+        <input id="autoupd" type="checkbox" checked> Auto-update on change
       </label>
     </div>
   </section>
 
-  <!-- Optional KPIs -->
-  <details class="kpiwrap">
+  <!-- KPIs OPEN BY DEFAULT -->
+  <details class="kpiwrap" open>
     <summary>Show KPIs</summary>
     <div class="kpis">
       <div class="kpi"><div class="label">Population ≥75 (final)</div><div id="kpi_pop" class="val">—</div></div>
@@ -155,31 +175,21 @@
     </div>
   </details>
 
-  <!-- CHARTS: 3 across × 2 down -->
+  <!-- CHARTS -->
   <section class="charts">
-    <div class="plot card"><h3>Population ≥75</h3>
-      <svg id="svg_pop" class="chart"></svg>
-    </div>
-    <div class="plot card"><h3>ED Attendances per year</h3>
-      <svg id="svg_att" class="chart"></svg>
-    </div>
-    <div class="plot card"><h3>Admissions per year</h3>
-      <svg id="svg_adm" class="chart"></svg>
-    </div>
-    <div class="plot card"><h3>Cumulative admissions</h3>
-      <svg id="svg_cum" class="chart"></svg>
-    </div>
-    <div class="plot card"><h3>Bed-days per year</h3>
-      <svg id="svg_bd" class="chart"></svg>
-    </div>
-    <div class="plot card"><h3>Total cost per year (<span id="price_lbl"></span>)</h3>
-      <svg id="svg_cost" class="chart"></svg>
-    </div>
+    <div class="plot card"><h3>Population ≥75</h3><svg id="svg_pop" class="chart"></svg></div>
+    <div class="plot card"><h3>ED Attendances per year</h3><svg id="svg_att" class="chart"></svg></div>
+    <div class="plot card"><h3>Admissions per year</h3><svg id="svg_adm" class="chart"></svg></div>
+    <div class="plot card"><h3>Cumulative admissions</h3><svg id="svg_cum" class="chart"></svg></div>
+    <div class="plot card"><h3>Bed-days per year</h3><svg id="svg_bd" class="chart"></svg></div>
+    <div class="plot card"><h3>Total cost per year — Nominal vs Real (<span id="price_lbl"></span>)</h3><svg id="svg_cost" class="chart"></svg></div>
   </section>
 </div>
 
 <script>
-  // --- Helpers ---
+  // If JS runs, hide overlay (some in-app viewers block it)
+  try{ document.getElementById('jsOverlay').style.display='none'; }catch(e){}
+
   const q = (id)=>document.getElementById(id);
   const fmt0 = (n)=>Math.round(Number(n)).toLocaleString();
   const fmtEUR = (n)=>"€ "+Math.round(Number(n)).toLocaleString();
@@ -191,15 +201,18 @@
     if(end < start){ end = start; q("end_year").value = end; }
     return {
       initial_pop:      num(q("initial_pop").value, 30000),
-      growth_rate:      num(q("growth_rate").value, 0.10),
-      mortality_rate:   num(q("mortality_rate").value, 0.05),
-      ed_rate_per_1000: num(q("ed_rate").value, 900),
-      admission_rate:   num(q("admission_rate").value, 0.55),
+      growth_rate:      num(q("growth_rate").value, 0.055),
+      mortality_rate:   num(q("mortality_rate").value, 0.029),
+      ed_rate_per_1000: num(q("ed_rate").value, 750),
+      admission_rate:   num(q("admission_rate").value, 0.48),
       los_days:         num(q("los_days").value, 6.5),
       unit_cost_eur:    num(q("unit_cost").value, 5800),
-      start_year: start, end_year: end, dt: num(q("dt").value, 0.25),
-      price_year: q("price_year").value || "",
-      speed: num(q("speed").value, 2500)
+      unit_base_year:   num(q("unit_base_year").value, 2024),
+      cost_growth:      num(q("cost_growth").value, 0.03),
+      cost_mode:        (q("cost_mode").value || "nominal"),
+      base_year:        num(q("base_year").value, 2024),
+      start_year: start, end_year: end, dt: 0.25,
+      price_year: q("price_year").value || ""
     };
   }
 
@@ -207,7 +220,7 @@
     const t=[]; for(let x=p.start_year; x<=p.end_year+1e-9; x+=p.dt){ t.push(Number(x.toFixed(6))); }
     const n=t.length;
     const pop=new Array(n).fill(0), attend=new Array(n).fill(0), adm=new Array(n).fill(0),
-          bd=new Array(n).fill(0), cost=new Array(n).fill(0), cum=new Array(n).fill(0);
+          bd=new Array(n).fill(0), costNom=new Array(n).fill(0), costReal=new Array(n).fill(0), cum=new Array(n).fill(0);
 
     pop[0]=p.initial_pop;
     for(let i=1;i<n;i++){
@@ -217,13 +230,18 @@
     for(let i=0;i<n;i++){
       const a = pop[i] * (p.ed_rate_per_1000 / 1000.0);
       const m = a * p.admission_rate;
-      attend[i]=a; adm[i]=m; bd[i]=m*p.los_days; cost[i]=m*p.unit_cost_eur;
+      const yearsFromBase = (t[i] - p.unit_base_year);
+      const unitCostNom = p.unit_cost_eur * Math.pow(1 + p.cost_growth, yearsFromBase);
+      costNom[i] = m * unitCostNom;
+      const yearsToBase = (p.base_year - t[i]);
+      const deflator = Math.pow(1 + p.cost_growth, yearsToBase);
+      costReal[i] = costNom[i] * deflator;
+      attend[i]=a; adm[i]=m; bd[i]=m*p.los_days;
       cum[i] = (i===0?0:cum[i-1] + m*p.dt);
     }
-    return {t,pop,attend,adm,bd,cost,cum};
+    return {t,pop,attend,adm,bd,costNom,costReal,cum};
   }
 
-  // Slider visual fill
   function styleRange(el){
     if(!el || !el.matches('input[type="range"]')) return;
     const min = parseFloat(el.min)||0, max=parseFloat(el.max)||100, val=parseFloat(el.value)||0;
@@ -231,7 +249,6 @@
     el.style.backgroundSize = pct + "% 100%";
   }
 
-  // Placeholder
   function drawPlaceholder(svg, msg){
     const W=svg.clientWidth||900, H=svg.clientHeight||170;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -246,46 +263,36 @@
     text.setAttribute('x', W/2); text.setAttribute('y', H/2);
     text.setAttribute('text-anchor','middle'); text.setAttribute('fill','#6b7280');
     text.setAttribute('font-size','12');
-    text.textContent = msg || 'Press Run to play';
+    text.textContent = msg || 'Press Run to render';
     svg.appendChild(text);
   }
   function renderBlank(){
     ['svg_pop','svg_att','svg_adm','svg_cum','svg_bd','svg_cost'].forEach(id=>{
-      const el = q(id); if(el) drawPlaceholder(el, 'Press Run to play');
+      const el = q(id); if(el) drawPlaceholder(el, 'Press Run to render');
     });
     const pl = document.getElementById('price_lbl'); if(pl) pl.textContent = '';
   }
 
-  // Axes + animated line with clipPath sweep
-  function lineChartPlay(svg, series, opts){
+  // Single-series line chart
+  function lineChart(svg, series){
     const W=svg.clientWidth||900, H=svg.clientHeight||170;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     while(svg.firstChild) svg.removeChild(svg.firstChild);
-
     const m={t:8,r:10,b:20,l:46}, w=W-m.l-m.r, h=H-m.t-m.b;
     const t=series.t, y=series.y;
-    if(!t || !y || t.length===0 || y.length===0){ return {cancel:()=>{}}; }
-
+    if(!t || !y || t.length===0 || y.length===0){ return; }
     let minX=Math.min(...t), maxX=Math.max(...t);
     let minY=Math.min(...y), maxY=Math.max(...y);
     if(!isFinite(minY) || !isFinite(maxY)){ minY=0; maxY=1; }
     if(minY===maxY){ maxY = minY + 1; }
-
     const scaleX=(v)=>m.l + (w*(v-minX))/(maxX-minX);
     const scaleY=(v)=>m.t + h - (h*(v-minY))/(maxY-minY);
-
     const NS='http://www.w3.org/2000/svg';
     const line=(a)=>{ const el=document.createElementNS(NS,'line'); for(const k in a) el.setAttribute(k,a[k]); return el; };
     const text=(a,txt)=>{ const el=document.createElementNS(NS,'text'); for(const k in a) el.setAttribute(k,a[k]); el.textContent=txt; return el; };
     const path=()=>document.createElementNS(NS,'path');
-    const grp=()=>document.createElementNS(NS,'g');
-    const defs=document.createElementNS(NS,'defs');
-    svg.appendChild(defs);
-
-    // axes
-    svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
-    svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke: '#cbd5e1','stroke-width':1}));
-
+    svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:'#cbd5e1','stroke-width':1}));
+    svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke:'#cbd5e1','stroke-width':1}));
     for(let i=0;i<=3;i++){
       const xt=minX + (i*(maxX-minX))/3, lx=scaleX(xt), ly=H-m.b;
       svg.appendChild(line({x1:lx,y1:ly,x2:lx,y2:ly+3,stroke:'#cbd5e1','stroke-width':1}));
@@ -296,154 +303,114 @@
       svg.appendChild(line({x1:m.l-3,y1:ly,x2:m.l,y2:ly,stroke:'#cbd5e1','stroke-width':1}));
       svg.appendChild(text({x:m.l-6,y:ly+3,fill:'#475569','font-size':9,'text-anchor':'end'}, Math.round(yt).toLocaleString()));
     }
-
-    // path
     let d=""; for(let i=0;i<t.length;i++){ const X=scaleX(t[i]), Y=scaleY(y[i]); d += (i===0?`M ${X} ${Y}`:` L ${X} ${Y}`); }
     const p = path(); p.setAttribute('d', d); p.setAttribute('fill','none'); p.setAttribute('stroke','#1e3a8a'); p.setAttribute('stroke-width','2');
+    svg.appendChild(p);
+  }
 
-    // clipPath sweep
-    const clipId = 'clip_' + Math.random().toString(36).slice(2);
-    const cp = document.createElementNS(NS,'clipPath'); cp.setAttribute('id', clipId); cp.setAttribute('clipPathUnits','userSpaceOnUse');
-    const clipRect = document.createElementNS(NS,'rect');
-    clipRect.setAttribute('x', m.l); clipRect.setAttribute('y', m.t);
-    clipRect.setAttribute('width', 0); clipRect.setAttribute('height', h);
-    cp.appendChild(clipRect); defs.appendChild(cp);
-
-    const g = grp(); g.setAttribute('clip-path', `url(#${clipId})`);
-    g.appendChild(p); svg.appendChild(g);
-
-    // moving head dot
-    const head = document.createElementNS(NS,'circle');
-    head.setAttribute('r', 3.2); head.setAttribute('fill', '#0d9488'); head.setAttribute('stroke', '#0d9488');
-    svg.appendChild(head);
-
-    // animation
-    let raf = null, start=null, paused=false, pauseT=0;
-    const duration = Math.max(300, (opts&&opts.duration)||2000);
-    function step(ts){
-      if(start===null) start=ts;
-      if(paused){ start += (ts - pauseT); pauseT = ts; raf = requestAnimationFrame(step); return; }
-      const tnorm = Math.min(1, (ts - start) / duration);
-      clipRect.setAttribute('width', tnorm * w);
-      // move the head along X; map to nearest point index
-      const idx = Math.min(Math.floor(tnorm * (t.length-1)), t.length-1);
-      head.setAttribute('cx', scaleX(t[idx])); head.setAttribute('cy', scaleY(y[idx]));
-      if(tnorm < 1){ raf = requestAnimationFrame(step); }
-      else { if (opts && typeof opts.onDone === 'function') opts.onDone(); }
+  // Dual-line chart
+  function dualLineChart(svg, t, yA, yB, labelA, labelB){
+    const W=svg.clientWidth||900, H=svg.clientHeight||170;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    const m={t:8,r:10,b:20,l:46}, w=W-m.l-m.r, h=H-m.t-m.b;
+    let minX=Math.min(...t), maxX=Math.max(...t);
+    let minY=Math.min(Math.min(...yA), Math.min(...yB));
+    let maxY=Math.max(Math.max(...yA), Math.max(...yB));
+    if(!isFinite(minY) || !isFinite(maxY)){ minY=0; maxY=1; }
+    if(minY===maxY){ maxY = minY + 1; }
+    const scaleX=(v)=>m.l + (w*(v-minX))/(maxX-minX);
+    const scaleY=(v)=>m.t + h - (h*(v-minY))/(maxY-minY);
+    const NS='http://www.w3.org/2000/svg';
+    const line=(a)=>{ const el=document.createElementNS(NS,'line'); for(const k in a) el.setAttribute(k,a[k]); return el; };
+    const text=(a,txt)=>{ const el=document.createElementNS(NS,'text'); for(const k in a) el.setAttribute(k,a[k]); el.textContent=txt; return el; };
+    const path=()=>document.createElementNS(NS,'path');
+    svg.appendChild(line({x1:m.l,y1:H-m.b,x2:W-m.r,y2:H-m.b,stroke:'#cbd5e1','stroke-width':1}));
+    svg.appendChild(line({x1:m.l,y1:m.t,x2:m.l,y2:H-m.b,stroke:'#cbd5e1','stroke-width':1}));
+    for(let i=0;i<=3;i++){
+      const xt=minX + (i*(maxX-minX))/3, lx=scaleX(xt), ly=H-m.b;
+      svg.appendChild(line({x1:lx,y1:ly,x2:lx,y2:ly+3,stroke:'#cbd5e1','stroke-width':1}));
+      svg.appendChild(text({x:lx,y:ly+12,fill:'#475569','font-size':9,'text-anchor':'middle'}, Math.round(xt)));
     }
-    raf = requestAnimationFrame(step);
-
-    return {
-      cancel: ()=>{ if(raf) cancelAnimationFrame(raf); },
-      pause: ()=>{ if(!paused){ paused=true; pauseT=performance.now(); } },
-      play: ()=>{ if(paused){ paused=false; raf=requestAnimationFrame(step); } }
-    };
+    for(let i=0;i<=3;i++){
+      const yt=minY + (i*(maxY-minY))/3, ly=scaleY(yt);
+      svg.appendChild(line({x1:m.l-3,y1:ly,x2:m.l,y2:ly,stroke:'#cbd5e1','stroke-width':1}));
+      svg.appendChild(text({x:m.l-6,y:ly+3,fill:'#475569','font-size':9,'text-anchor':'end'}, Math.round(yt).toLocaleString()));
+    }
+    function buildPath(Y){ let d=""; for(let i=0;i<t.length;i++){ const X=scaleX(t[i]), Yp=scaleY(Y[i]); d += (i===0?`M ${X} ${Yp}`:` L ${X} ${Yp}`); } return d; }
+    const pA = path(); pA.setAttribute('d', buildPath(yA)); pA.setAttribute('fill','none'); pA.setAttribute('stroke','#1e3a8a'); pA.setAttribute('stroke-width','2');
+    const pB = path(); pB.setAttribute('d', buildPath(yB)); pB.setAttribute('fill','none'); pB.setAttribute('stroke','#0d9488'); pB.setAttribute('stroke-width','2');
+    svg.appendChild(pA); svg.appendChild(pB);
+    const lgx = W - 170, lgy = 16;
+    const r1 = document.createElementNS(NS,'rect'); r1.setAttribute('x', lgx); r1.setAttribute('y', lgy-10); r1.setAttribute('width', 160); r1.setAttribute('height', 28); r1.setAttribute('rx',6); r1.setAttribute('fill','#fff'); r1.setAttribute('stroke','#e5e7eb'); svg.appendChild(r1);
+    const sw1 = document.createElementNS(NS,'rect'); sw1.setAttribute('x', lgx+8); sw1.setAttribute('y', lgy-4); sw1.setAttribute('width', 14); sw1.setAttribute('height', 4); sw1.setAttribute('fill', '#1e3a8a'); svg.appendChild(sw1);
+    const tx1 = text({x:lgx+28,y:lgy,fill:'#334155','font-size':10}, labelA); svg.appendChild(tx1);
+    const sw2 = document.createElementNS(NS,'rect'); sw2.setAttribute('x', lgx+8); sw2.setAttribute('y', lgy+8); sw2.setAttribute('width', 14); sw2.setAttribute('height', 4); sw2.setAttribute('fill', '#0d9488'); svg.appendChild(sw2);
+    const tx2 = text({x:lgx+28,y:lgy+12,fill:'#334155','font-size':10}, labelB); svg.appendChild(tx2);
   }
 
-  let active = []; // track animations to pause/cancel
-  function cancelActive(){ active.forEach(a=>a.cancel&&a.cancel()); active=[]; }
-
-  function updateKpis(sim){
-    const kpiWrap = document.querySelector('.kpiwrap');
-    if (!kpiWrap || !kpiWrap.open) return;
+  function updateKpis(sim, p){
     const i=sim.t.length-1;
-    const set = (id,val)=>{ const el=q(id); if(el) el.textContent = val; };
-    set("kpi_pop",  fmt0(sim.pop[i]));
-    set("kpi_att",  fmt0(sim.attend[i]));
-    set("kpi_adm",  fmt0(sim.adm[i]));
-    set("kpi_bd",   fmt0(sim.bd[i]));
-    set("kpi_cost", fmtEUR(sim.cost[i]));
+    const set=(id,val)=>{ const el=q(id); if(el) el.textContent=val; };
+    set("kpi_pop",fmt0(sim.pop[i]));
+    set("kpi_att",fmt0(sim.attend[i]));
+    set("kpi_adm",fmt0(sim.adm[i]));
+    set("kpi_bd",fmt0(sim.bd[i]));
+    const costSeries=(p.cost_mode==='real')?sim.costReal:sim.costNom;
+    set("kpi_cost",fmtEUR(costSeries[i]));
   }
 
-  function playAll(sim, duration){
-    cancelActive();
-    const done = ()=>{};
-    active = [
-      lineChartPlay(q("svg_pop"),  {t:sim.t,y:sim.pop},  {duration, onDone:done}),
-      lineChartPlay(q("svg_att"),  {t:sim.t,y:sim.attend},{duration, onDone:done}),
-      lineChartPlay(q("svg_adm"),  {t:sim.t,y:sim.adm},  {duration, onDone:done}),
-      lineChartPlay(q("svg_cum"),  {t:sim.t,y:sim.cum},  {duration, onDone:done}),
-      lineChartPlay(q("svg_bd"),   {t:sim.t,y:sim.bd},   {duration, onDone:done}),
-      lineChartPlay(q("svg_cost"), {t:sim.t,y:sim.cost}, {duration, onDone:()=>{ updateKpis(sim); }})
-    ];
+  function renderAll(){
+    const p=readParams(), sim=simulate(p);
+    lineChart(q("svg_pop"),{t:sim.t,y:sim.pop});
+    lineChart(q("svg_att"),{t:sim.t,y:sim.attend});
+    lineChart(q("svg_adm"),{t:sim.t,y:sim.adm});
+    lineChart(q("svg_cum"),{t:sim.t,y:sim.cum});
+    lineChart(q("svg_bd"),{t:sim.t,y:sim.bd});
+    dualLineChart(q("svg_cost"),sim.t,sim.costNom,sim.costReal,"Nominal €",`Real € (base ${p.base_year})`);
+    const pl=document.getElementById('price_lbl'); if(pl) pl.textContent = `Nominal vs Real (€ base ${p.base_year})`;
+    updateKpis(sim,p);
   }
 
   function bind(){
-    // Slider labels + fill
-    const idMap = {
-      "growth_rate":"growth_rate_val",
-      "mortality_rate":"mortality_rate_val",
-      "ed_rate":"ed_rate_val",
-      "admission_rate":"admission_rate_val",
-      "los_days":"los_days_val"
-    };
+    const idMap={"growth_rate":"growth_rate_val","mortality_rate":"mortality_rate_val","ed_rate":"ed_rate_val","admission_rate":"admission_rate_val","los_days":"los_days_val","cost_growth":"cost_growth_val"};
     Object.keys(idMap).forEach(id=>{
-      const el=q(id), lbl=q(idMap[id]);
-      if(!el||!lbl) return;
-      const handler=()=>{
-        lbl.textContent = el.value;
-        if(el.dataset.fill) styleRange(el);
-        const au = q("autoupd");
-        if(au && au.checked){
-          const p=readParams(), sim=simulate(p); playAll(sim, p.speed);
-        }
-      };
-      el.addEventListener('input', handler);
-      el.addEventListener('change', handler);
-      styleRange(el);
+      const el=q(id), lbl=q(idMap[id]); if(!el||!lbl) return;
+      const handler=()=>{ lbl.textContent=el.value; styleRange(el); if(q("autoupd").checked){ renderAll(); } };
+      el.addEventListener('input',handler); el.addEventListener('change',handler); styleRange(el);
     });
-
-    // Buttons
-    q("run").addEventListener("click", ()=>{
-      const p=readParams(); const sim=simulate(p);
-      q("price_lbl").textContent = p.price_year;
-      playAll(sim, p.speed);
-      const pp = q("playPause"); pp.disabled = false; pp.textContent = "Pause ⏸";
-      pp.dataset.state = "playing";
+    ['cost_mode','base_year','unit_base_year','price_year','start_year','end_year','initial_pop','unit_cost'].forEach(id=>{
+      const el=q(id); if(!el) return;
+      el.addEventListener('input',()=>{ if(q("autoupd").checked){ renderAll(); } });
+      el.addEventListener('change',()=>{ if(q("autoupd").checked){ renderAll(); } });
     });
-
-    q("playPause").addEventListener("click", ()=>{
-      const pp = q("playPause");
-      if(pp.dataset.state === "playing"){
-        active.forEach(a=>a.pause&&a.pause());
-        pp.textContent = "Play ▶";
-        pp.dataset.state = "paused";
-      } else {
-        active.forEach(a=>a.play&&a.play());
-        pp.textContent = "Pause ⏸";
-        pp.dataset.state = "playing";
-      }
-    });
-
+    q("run").addEventListener("click", ()=>{ renderAll(); });
     q("reset").addEventListener("click", ()=>{
-      cancelActive();
-      // defaults
       q("initial_pop").value=30000;
-      q("growth_rate").value=0.10; q("growth_rate_val").textContent="0.10"; styleRange(q("growth_rate"));
-      q("mortality_rate").value=0.05; q("mortality_rate_val").textContent="0.05"; styleRange(q("mortality_rate"));
-      q("ed_rate").value=900; q("ed_rate_val").textContent="900"; styleRange(q("ed_rate"));
-      q("admission_rate").value=0.55; q("admission_rate_val").textContent="0.55"; styleRange(q("admission_rate"));
+      q("growth_rate").value=0.055; q("growth_rate_val").textContent="0.055"; styleRange(q("growth_rate"));
+      q("mortality_rate").value=0.029; q("mortality_rate_val").textContent="0.029"; styleRange(q("mortality_rate"));
+      q("ed_rate").value=750; q("ed_rate_val").textContent="750"; styleRange(q("ed_rate"));
+      q("admission_rate").value=0.48; q("admission_rate_val").textContent="0.48"; styleRange(q("admission_rate"));
       q("los_days").value=6.5; q("los_days_val").textContent="6.5"; styleRange(q("los_days"));
-      q("unit_cost").value=5800;
-      q("start_year").value=2015; q("end_year").value=2050; q("dt").value=0.25; q("price_year").value="Specify (e.g., 2024 €)";
-      q("speed").value="2500";
-      const pp = q("playPause"); pp.disabled = true; pp.textContent = "Play ▶"; pp.dataset.state="paused";
-      const au = q("autoupd"); if(au) au.checked = false;
+      q("cost_growth").value=0.03; q("cost_growth_val").textContent="0.03"; styleRange(q("cost_growth"));
+      q("unit_cost").value=5800; q("unit_base_year").value=2024;
+      q("start_year").value=2015; q("end_year").value=2050;
+      q("cost_mode").value="nominal"; q("base_year").value=2024; q("price_year").value="Nominal vs Real (€ base 2024)";
       renderBlank();
     });
-
-    // Keep placeholders responsive
-    window.addEventListener("resize", ()=>{
-      cancelActive();
-      renderBlank();
-    });
+    window.addEventListener("resize", ()=>{ renderAll(); });
   }
 
-  // Init blank
-  bind(); renderBlank();
+  // Init
+  bind(); renderBlank(); renderAll();
 </script>
 </body>
-</html>
+</html>"""
+out_path = "/mnt/data/HSML_Over75_GEM_noPlay.html"
+with open(out_path, "w", encoding="utf-8") as f:
+    f.write(html)
+out_path
+
 
 
 
